@@ -1,4 +1,30 @@
 
+// Suppress common browser extension errors that aren't related to our app
+window.addEventListener('error', function(e) {
+  // Suppress extension-related errors
+  if (e.message && (
+    e.message.includes('Could not establish connection') ||
+    e.message.includes('Receiving end does not exist') ||
+    e.message.includes('Extension context invalidated') ||
+    e.message.includes('chrome-extension://')
+  )) {
+    e.preventDefault();
+    return false;
+  }
+});
+
+// Also handle unhandled promise rejections from extensions
+window.addEventListener('unhandledrejection', function(e) {
+  if (e.reason && e.reason.message && (
+    e.reason.message.includes('Could not establish connection') ||
+    e.reason.message.includes('Receiving end does not exist') ||
+    e.reason.message.includes('Extension context invalidated')
+  )) {
+    e.preventDefault();
+    return false;
+  }
+});
+
 // Debug helper function
 function debugLog(message, data = null, level = 'info') {
   const timestamp = new Date().toISOString();
