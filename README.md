@@ -39,8 +39,7 @@ uv run python main.py
 
 ## 📖 Documentation
 
-- **[QUICKSTART_GUIDE.md](QUICKSTART_GUIDE.md)** - Concise setup instructions for both Docker and local installation
-- **[INSTRUCTIONS.md](INSTRUCTIONS.md)** - Comprehensive documentation with detailed troubleshooting
+- This guide which your reading now
 - **[quickstart.md](quickstart.md)** - Ultra-quick command reference
 
 ## 🎮 Features
