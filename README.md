@@ -1,13 +1,16 @@
-# 🎵 Chirp Demo - Google Cloud Speech & TTS Interactive Demo
+# 🎵 Chirp Demo Enhanced - Google Cloud Speech & TTS Interactive Demo
 
 Original demo from https://github.com/rickygodoy/chirp-demo
 Full kudos to Felipe and Ricky.
 
 Made some improvements to enhance the user experience
-- changed the default user experience language to english 
-- added in some popular songs for the Karaoke
-- made the listen functionality more centered around language learning
-- call analyzer now translated into english
+
+- Changed the default user experience language to english 
+- Added in some popular songs for the Karaoke
+- Made the listen functionality more centered around language learning
+- Call analyzer now translated into english
+
+# Overview
 
 An interactive web application showcasing Google Cloud's advanced Speech-to-Text and Text-to-Speech capabilities through fun singing and learning games.
 
@@ -44,31 +47,45 @@ uv run python main.py
 
 ## 🎮 Features
 
-### Module 1: Creative Storyteller (TTS Demo)
-- **Voice Quality & Variety**: Experience human-like TTS voices with distinct personalities
-- **How it works**:
-  1. Click "Talk" and dictate a story beginning
-  2. See real-time transcription with automatic punctuation
-  3. Choose from various voice profiles (Old Storyteller, Energetic Youth, etc.)
-  4. Listen to your story read back with impressive clarity and personality
+### Module 1: Singing Contest
+Karaoke competition - Sing along to popular songs and get scored.
 
-### Module 2: Singing Contest (STT Demo)
-- **Real-time Transcription**: Sing along to popular songs and get scored
-- **Features**:
-  - Low-latency streaming transcription
-  - Word-level confidence scoring
-  - Timing and rhythm analysis
-  - High score leaderboard
+- Select the song which you'd like to sing the words to.
+- You'll see 4 sentences to sing, which will be highlighted so that you get the rhythm correct.
+- Upon completion, you'll be added into a leaderboard.
 
-### Module 3: Learning Game
-- **Listen & Type**: Test your listening comprehension
-- **Features**:
-  - Random phrase generation
-  - Accuracy scoring with Levenshtein distance
-  - Time-based bonus points
-  - Competitive leaderboard
+**How it works**:
+Sing the lyrics accurately to earn points based on accuracy, confidence, and timing.
 
-## 🛠 Technical Highlights
+**Features**:
+**Features**:
+- Low-latency streaming transcription
+- Word-level confidence scoring
+- Timing and rhythm analysis
+- High score leaderboard
+
+### Module 2: Language Learning
+Test your listening comprehension
+
+- Listen carefully and transcribe phrases to learn new languages
+- Select the language to hear the phrase in.
+- Write doen the phrase which you heard.
+- Then you'll see the meaning in English.
+
+**Features**:
+- Random phrase generation
+- Accuracy scoring with Levenshtein distance
+- Time-based bonus points
+- Competitive leaderboard
+
+### Module 3: Analyze a Call
+Demonstration of how Chirp transcribes calls with multiple speakers and identifies different voices
+
+**Features**:
+- Transcribes spoken words into text
+- Translates into target language
+
+## 🛠 Technical Highlights from all demos
 
 ### Chirp STT Features Showcased
 - ✅ Automatic punctuation
