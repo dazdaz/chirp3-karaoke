@@ -1,9 +1,13 @@
 # 🎵 Chirp Demo - Google Cloud Speech & TTS Interactive Demo
 
 Original demo from https://github.com/rickygodoy/chirp-demo
+Full kudos to Felipe and Ricky.
 
-Made some improvements to enhance the user experience.
- 
+Made some improvements to enhance the user experience
+- changed the default user experience language to english 
+- added in some popular songs for the Karaoke
+- made the listen functionality more centered around language learning
+- call analyzer now translated into english
 
 An interactive web application showcasing Google Cloud's advanced Speech-to-Text and Text-to-Speech capabilities through fun singing and learning games.
 
