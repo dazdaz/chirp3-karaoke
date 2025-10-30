@@ -1,0 +1,8 @@
+cd /Users/me/src/chirp-demo
+./setup-iam.sh
+uv venv && source .venv/bin/activate
+uv pip install -r requirements.txt
+export GOOGLE_CLOUD_PROJECT="my-playground"
+export GOOGLE_APPLICATION_CREDENTIALS="~/chirp-demo-credentials.json"
+uv run python main.py
+
