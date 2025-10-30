@@ -135,10 +135,6 @@ For development with auto-reload:
 uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 ```
 
-## 📄 License
-
-This is a demonstration project for Google Cloud's Chirp Speech APIs.
-
 ## 🆘 Support
 
 For issues or questions, refer to:
