@@ -1,4 +1,4 @@
-# 🎵 Chirp Demo Enhanced - Google Cloud Speech & TTS Interactive Demo
+# 🎵 Chirp2 Demo Enhanced - Google Cloud Speech & TTS Interactive Demo
 
 Original demo from https://github.com/rickygodoy/chirp-demo
 Full kudos to Felipe and Ricky.
@@ -59,11 +59,12 @@ Karaoke competition - Sing along to popular songs and get scored.
 Sing the lyrics accurately to earn points based on accuracy, confidence, and timing.
 
 **Features**:
-**Features**:
 - Low-latency streaming transcription
 - Word-level confidence scoring
 - Timing and rhythm analysis
 - High score leaderboard
+- Uses Chirp 2 for Speech-to-Text (STT) - configured in the streaming recognition config with model="chirp_2"
+- Chirp 3 is not GA yet, but when available update line 242 in main.py and check regional support
 
 ### Module 2: Language Learning
 Test your listening comprehension
@@ -78,13 +79,16 @@ Test your listening comprehension
 - Accuracy scoring with Levenshtein distance
 - Time-based bonus points
 - Competitive leaderboard
+- Uses Chirp 3 for Text-to-Speech (TTS) - uses "en-US-Chirp3-HD-Charon" voice for English synthesis
 
 ### Module 3: Analyze a Call
-Demonstration of how Chirp transcribes calls with multiple speakers and identifies different voices
+Call Analysis is a demonstration that shows how Chirp could be used for call transcription with speaker identification from multiple voices.
+
+This is a static demonstration using hardcoded content, not actual Chirp speech-to-text with speaker diarization. It serves as a proof-of-concept showing what a call analysis interface could look like, but the transcript, speaker identification, and translations are all pre-prepared to simulate the experience.
 
 **Features**:
 - Transcribes spoken words into text
-- Translates into target language
+- Translates into a selection of 8 target languages
 
 ## 🛠 Technical Highlights from all demos
 

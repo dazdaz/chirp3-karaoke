@@ -2227,6 +2227,9 @@ applyTheme();
       captionButton.textContent = start_singing;
       captionButton.disabled = false; // Re-enable button
 
+      // Hide processing overlay
+      countdownOverlay.classList.add('hidden');
+
       // --- Show transcribed text ---
       if (finalTranscript) {
         captionOutput.textContent = finalTranscript;
@@ -2263,6 +2266,9 @@ applyTheme();
         "Error: Could not connect to the server. Is it running?";
       captionButton.textContent = start_singing;
       captionButton.disabled = false; // Re-enable button
+      
+      // Hide processing overlay on error
+      countdownOverlay.classList.add('hidden');
     };
   }
   
@@ -2273,6 +2279,10 @@ applyTheme();
     stopRecordingTimer();
     captionButton.textContent = "Processing...";
     captionButton.disabled = true;
+
+    // Show processing overlay with same style as "Get Ready"
+    countdownOverlay.classList.remove('hidden');
+    countdownOverlayText.textContent = "Processing";
 
     // Stop the audio source locally
     if (globalStream) {
