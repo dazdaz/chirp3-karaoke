@@ -9,6 +9,7 @@ Made some improvements to enhance the user experience
 - Added in some popular songs for the Karaoke
 - Made the listen functionality more centered around language learning
 - Call analyzer now translated into english
+- added setup-iam.sh, cleanup-iam.sh and start.sh
 
 # Overview
 
