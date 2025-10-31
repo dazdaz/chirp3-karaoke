@@ -424,16 +424,31 @@ document.addEventListener('click', () => {
   const tabPanes = document.querySelectorAll(".tab-pane");
 
   tabLinks.forEach((link) => {
-    link.addEventListener("click", () => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const tabId = link.dataset.tab;
+      
+      console.log(`Switching to tab: ${tabId}`);
+      debugLog(`Tab switch triggered: ${tabId}`, null, 'info');
 
       // Deactivate all tabs
       tabLinks.forEach((l) => l.classList.remove("active"));
       tabPanes.forEach((p) => p.classList.remove("active"));
 
       // Activate the clicked tab
+      // Find the corresponding nav tab button and activate it
+      const navTabButton = document.querySelector(`.nav-tabs .tab-link[data-tab="${tabId}"]`);
+      if (navTabButton) {
+        navTabButton.classList.add("active");
+      }
       link.classList.add("active");
-      document.getElementById(tabId).classList.add("active");
+      const targetPane = document.getElementById(tabId);
+      if (targetPane) {
+        targetPane.classList.add("active");
+      } else {
+        console.error(`Tab pane not found: ${tabId}`);
+      }
     });
   });
 
@@ -2389,6 +2404,7 @@ document.addEventListener('click', () => {
   // Language names for display
   const languageNames = {
     'en-US': 'English',
+    'fr-FR': 'French',
     'ja-JP': 'Japanese',
     'es-ES': 'Spanish',
     'pt-BR': 'Portuguese',

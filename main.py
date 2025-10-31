@@ -83,6 +83,17 @@ phrases: Dict[str, list[str]] = {
         "That which does not kill us makes us stronger",
         "The journey of a thousand miles begins with a single step",
     ],
+    "fr-FR": [
+        "Bonjour le monde", "Comment allez-vous", "Quel est votre nom", "Bonjour",
+        "Merci beaucoup", "Excusez-moi s'il vous plaît", "Je suis désolé", "Bonne journée",
+        "Le ciel est bleu", "J'adore voyager",
+        "La vie est belle", "Il fait beau aujourd'hui", "C'est magnifique",
+        "Je ne comprends pas", "Pouvez-vous répéter", "À bientôt",
+        "Où est la bibliothèque", "J'ai faim", "L'eau est claire",
+        "Paris est la capitale de la France", "Le fromage est délicieux",
+        "La technologie change notre monde", "Vive la différence",
+        "Qui vivra verra", "Mieux vaut tard que jamais"
+    ],
     "es-ES": [
         "Hola mundo", "¿Cómo estás?", "¿Cuál es tu nombre?", "Buenos días",
         "Muchas gracias", "Perdón, por favor", "Lo siento", "Que tengas un buen día",
@@ -107,6 +118,7 @@ phrases: Dict[str, list[str]] = {
 
 VOICE_MAPPING = {
     "en-US": "en-US-Chirp3-HD-Charon",
+    "fr-FR": "fr-FR-Wavenet-C",
     "es-ES": "es-ES-Wavenet-B",
     "ja-JP": "ja-JP-Wavenet-A",
     "pt-BR": "pt-BR-Wavenet-A",

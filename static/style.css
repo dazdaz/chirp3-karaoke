@@ -160,10 +160,17 @@ body {
 }
 
 .tab-pane.active {
-  display: block;
+  display: block !important;
   margin: 0;
   padding: 0;
   position: relative;
+}
+
+.tab-pane#welcome.active {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 100px);
 }
 
 @keyframes fadeIn {
@@ -176,12 +183,21 @@ body {
   text-align: center;
   padding: 0 !important;
   margin: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
 
 .hero-content {
   max-width: 1000px;
   margin: 0 auto !important;
-  padding: 0 !important;
+  padding: 2rem !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 .hero-icon {
@@ -192,22 +208,24 @@ body {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 0 0 0.5rem 0 !important;
+  margin: 0 0 1rem 0 !important;
   padding: 0 !important;
 }
 
 .hero-description {
   font-size: 1rem;
   color: var(--text-secondary);
-  margin: 0.5rem auto 0.75rem auto;
+  margin: 0 auto 2.5rem auto;
   max-width: 600px;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
   margin-top: 0;
+  width: 100%;
+  max-width: 1200px;
 }
 
 .feature-card {
@@ -217,7 +235,14 @@ body {
   box-shadow: var(--shadow-light);
   text-align: center;
   transition: var(--transition);
-  cursor: pointer;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.feature-card * {
+  pointer-events: none;
 }
 
 .feature-card:hover {
@@ -232,7 +257,7 @@ body {
 }
 
 .feature-card h3 {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: var(--text-primary);
@@ -241,8 +266,8 @@ body {
 .feature-card p {
   color: var(--text-secondary);
   margin-bottom: 1rem;
-  line-height: 1.4;
-  font-size: 0.9rem;
+  line-height: 1.3;
+  font-size: 0.85rem;
 }
 
 .feature-btn {
@@ -257,11 +282,15 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  position: relative;
+  z-index: 10;
+  pointer-events: auto !important;
 }
 
 .feature-btn:hover {
   background: var(--primary-hover);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
 }
 
 /* ===== CONTEST LAYOUTS ===== */
@@ -605,12 +634,12 @@ body {
   border-left: 4px solid var(--primary-color);
   font-family: 'Monaco', 'Menlo', monospace;
   font-size: 0.85rem;
-  line-height: 1.4;
+  line-height: 1.6;
   white-space: pre-wrap;
   display: none;
   overflow-y: auto;
-  max-height: 160px;
-  min-height: 50px;
+  max-height: 200px;
+  min-height: 80px;
 }
 
 .refrain-display.visible,
@@ -996,15 +1025,37 @@ body {
   .main-content {
     padding: 1rem;
   }
+  
+  .feature-grid {
+    gap: 1rem;
+  }
+  
+  .feature-card {
+    padding: 1rem;
+  }
+  
+  .feature-card h3 {
+    font-size: 0.95rem;
+  }
+  
+  .feature-card p {
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 768px) {
   .hero-content h2 {
-    font-size: 2rem;
+    font-size: 1.5rem;
+  }
+  
+  .hero-description {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
   
   .feature-grid {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
   
   .nav-tabs {
@@ -1018,6 +1069,10 @@ body {
   
   .modal-buttons {
     flex-direction: column;
+  }
+  
+  .feature-card {
+    padding: 0.75rem;
   }
 }
 
@@ -1258,24 +1313,26 @@ body {
 /* Karaoke-style lyric highlighting */
 pre.refrain-display.with-highlighting.visible {
   padding: 0.6rem !important;
-  line-height: 1.5 !important;
-  font-size: 0.85rem !important;
+  line-height: 1.6 !important;
+  font-size: 0.82rem !important;
   font-weight: 500 !important;
   white-space: normal !important;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   background: var(--bg-secondary) !important;
   border-left: 4px solid var(--primary-color) !important;
-  max-height: 160px !important;
+  max-height: 200px !important;
+  min-height: 100px !important;
 }
 
 pre.refrain-display.with-highlighting.visible .lyric-line {
   display: block !important;
-  margin: 0.4rem 0 !important;
-  padding: 0.4rem !important;
+  margin: 0.25rem 0 !important;
+  padding: 0.3rem 0.4rem !important;
   transition: all 0.3s ease !important;
   color: #9ca3af !important;
   border-radius: 4px !important;
   font-family: inherit !important;
+  font-size: 0.82rem !important;
 }
 
 /* Current line being sung - highlighted in yellow/gold */
@@ -1320,46 +1377,74 @@ body.dark-mode pre.refrain-display.with-highlighting.visible .lyric-line.sung {
 
 /* ===== WELCOME TAB SPECIFIC OVERRIDES ===== */
 #welcome {
-  margin-top: -4rem !important;
+  margin-top: 0 !important;
   padding-top: 0 !important;
+  min-height: calc(100vh - 80px);
+  position: relative;
+}
+
+#welcome.active {
+  display: flex !important;
 }
 
 #welcome .welcome-hero {
-  margin-top: -2rem !important;
+  margin-top: 0 !important;
   padding-top: 0 !important;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #welcome .hero-content {
-  transform: translateY(-40px) !important;
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  transform: none !important;
+  padding: 1rem 2rem !important;
 }
 
 #welcome .hero-content h2 {
-  margin: 0 0 0.25rem 0 !important;
-  font-size: 1.5rem !important;
+  margin: 0 0 0.5rem 0 !important;
+  font-size: 1.75rem !important;
 }
 
 #welcome .hero-description {
-  margin: 0.25rem auto 0.5rem auto !important;
-  font-size: 0.9rem !important;
+  margin: 0 auto 1.5rem auto !important;
+  font-size: 0.95rem !important;
 }
 
 #welcome .feature-grid {
-  transform: translateY(-30px) !important;
-  gap: 0.75rem !important;
+  transform: none !important;
+  gap: 1.25rem !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  width: 100% !important;
+  max-width: 900px !important;
 }
 
 #welcome .feature-card {
   padding: 1rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  min-height: 200px !important;
 }
 
 #welcome .feature-card h3 {
-  font-size: 1rem !important;
-  margin-bottom: 0.25rem !important;
+  font-size: 1.1rem !important;
+  margin-bottom: 0.4rem !important;
 }
 
 #welcome .feature-card p {
-  font-size: 0.8rem !important;
+  font-size: 0.85rem !important;
   margin-bottom: 0.75rem !important;
+  flex-grow: 1;
+}
+
+#welcome .feature-btn {
+  padding: 0.6rem 1.2rem !important;
+  font-size: 0.85rem !important;
 }
 
 /* ===== DARK MODE WELCOME TEXT OVERRIDES ===== */
@@ -1373,8 +1458,15 @@ html body.dark-mode #welcome .welcome-hero .hero-content h2 {
 
 html body.dark-mode #welcome .welcome-hero .hero-content p.welcome-subtitle,
 html body.dark-mode #welcome .welcome-hero .hero-content p.hero-description,
-html body.dark-mode #welcome .welcome-hero .hero-content p {
+html body.dark-mode #welcome .welcome-hero .hero-content > p {
   color: rgb(0, 0, 0) !important;
   color: black !important;
   color: #000000 !important;
+}
+
+/* Feature card descriptions in dark mode */
+html body.dark-mode #welcome .feature-card p {
+  color: #ffffff !important;
+  color: white !important;
+  color: rgb(255, 255, 255) !important;
 }

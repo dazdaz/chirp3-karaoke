@@ -3,10 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Google Cloud Multimodal Demo</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Google Cloud Interactive Speech Demo</title>
     <link
       rel="stylesheet"
-      href="{{ url_for('static', path='style.css') }}"
+      href="{{ url_for('static', path='style.css') }}?v={{ range(1000, 9999) | random }}"
     />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
@@ -35,7 +38,7 @@
               <img src="{{ url_for('static', path='logo.svg') }}" alt="Chirp Demo Logo">
             </div>
             <div class="brand-info">
-              <h1>Google Cloud Multimodal Demo</h1>
+              <h1>Google Cloud Interactive Speech Demo</h1>
               <span class="subtitle">Google AI Audio Model Chirp 2+3</span>
             </div>
           </div>
@@ -77,7 +80,7 @@
               <div class="hero-icon">
                 <i class="fas fa-waveform-lines"></i>
               </div>
-              <h2 class="welcome-title">Welcome to the Multimodal Demo</h2>
+              <h2 class="welcome-title">Welcome to the Interactive Speech Demo</h2>
               <p class="hero-description welcome-subtitle">
                 Explore the advanced capabilities of Google's Chirp model for audio processing and speech recognition through interactive demonstrations.
               </p>
@@ -302,6 +305,7 @@
                         </div>
                         <div class="options">
                           <div class="option selected" data-value="en-US"><i class="fas fa-flag-usa"></i> English</div>
+                          <div class="option" data-value="fr-FR"><i class="fas fa-flag"></i> French</div>
                           <div class="option" data-value="ja-JP"><i class="fas fa-flag"></i> Japanese</div>
                           <div class="option" data-value="es-ES"><i class="fas fa-flag"></i> Spanish</div>
                           <div class="option" data-value="pt-BR"><i class="fas fa-flag"></i> Portuguese</div>
@@ -660,6 +664,6 @@
       </div>
     </div>
 
-    <script src="{{ url_for('static', path='script.js') }}"></script>
+    <script src="{{ url_for('static', path='script.js') }}?v={{ range(1000, 9999) | random }}"></script>
   </body>
 </html>
