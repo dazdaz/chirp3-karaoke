@@ -44,7 +44,7 @@ uv run python main.py
 ## 📖 Documentation
 
 - This guide which your reading now
-- **[quickstart.md](quickstart.md)** - Ultra-quick command reference
+- **[quickstart.md](quickstart.txt)** - Ultra-quick command reference
 
 ## 🎮 Features
 

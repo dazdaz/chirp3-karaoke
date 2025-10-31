@@ -139,6 +139,28 @@ if (themeToggleButton) {
 // Apply the theme on initial load
 applyTheme();
 
+// Force black text for welcome content in dark mode
+const forceWelcomeTextColor = () => {
+  const isDarkMode = document.body.classList.contains('dark-mode');
+  if (isDarkMode) {
+    const welcomeTitle = document.querySelector('#welcome .welcome-title');
+    const welcomeSubtitle = document.querySelector('#welcome .welcome-subtitle');
+    const heroTitle = document.querySelector('#welcome .hero-content h2');
+    const heroDesc = document.querySelector('#welcome .hero-description');
+    
+    if (welcomeTitle) welcomeTitle.style.color = '#000000';
+    if (welcomeSubtitle) welcomeSubtitle.style.color = '#000000';
+    if (heroTitle) heroTitle.style.color = '#000000';
+    if (heroDesc) heroDesc.style.color = '#000000';
+  }
+};
+
+// Apply on load and when theme changes
+setTimeout(forceWelcomeTextColor, 100);
+document.addEventListener('click', () => {
+  setTimeout(forceWelcomeTextColor, 100);
+});
+
 // Test API connection on load
   fetch('/api/status')
     .then(response => response.json())

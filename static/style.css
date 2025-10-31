@@ -145,7 +145,7 @@ body {
 /* ===== MAIN CONTENT STYLES ===== */
 .main-content {
   flex: 1;
-  padding: 1rem 2rem;
+  padding: 0 2rem 1rem 2rem;
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
@@ -155,10 +155,15 @@ body {
 .tab-pane {
   display: none;
   animation: fadeIn 0.3s ease-in-out;
+  margin: 0;
+  padding: 0;
 }
 
 .tab-pane.active {
   display: block;
+  margin: 0;
+  padding: 0;
+  position: relative;
 }
 
 @keyframes fadeIn {
@@ -169,46 +174,45 @@ body {
 /* ===== WELCOME PAGE STYLES ===== */
 .welcome-hero {
   text-align: center;
-  padding: 2rem 0;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .hero-content {
   max-width: 1000px;
-  margin: 0 auto;
+  margin: 0 auto !important;
+  padding: 0 !important;
 }
 
 .hero-icon {
-  font-size: 3rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
+  display: none;
 }
 
 .hero-content h2 {
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 1rem;
+  margin: 0 0 0.5rem 0 !important;
+  padding: 0 !important;
 }
 
 .hero-description {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin: 0.5rem auto 0.75rem auto;
   max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 0;
 }
 
 .feature-card {
   background: var(--bg-primary);
-  padding: 1.5rem;
+  padding: 1.25rem;
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-light);
   text-align: center;
@@ -222,22 +226,23 @@ body {
 }
 
 .feature-icon {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: var(--primary-color);
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .feature-card h3 {
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
   color: var(--text-primary);
 }
 
 .feature-card p {
   color: var(--text-secondary);
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  font-size: 0.9rem;
 }
 
 .feature-btn {
@@ -1311,4 +1316,65 @@ body.dark-mode pre.refrain-display.with-highlighting.visible .lyric-line.current
 body.dark-mode pre.refrain-display.with-highlighting.visible .lyric-line.sung {
   color: #60a5fa !important;
   background: rgba(96, 165, 250, 0.1) !important;
+}
+
+/* ===== WELCOME TAB SPECIFIC OVERRIDES ===== */
+#welcome {
+  margin-top: -4rem !important;
+  padding-top: 0 !important;
+}
+
+#welcome .welcome-hero {
+  margin-top: -2rem !important;
+  padding-top: 0 !important;
+}
+
+#welcome .hero-content {
+  transform: translateY(-40px) !important;
+}
+
+#welcome .hero-content h2 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 1.5rem !important;
+}
+
+#welcome .hero-description {
+  margin: 0.25rem auto 0.5rem auto !important;
+  font-size: 0.9rem !important;
+}
+
+#welcome .feature-grid {
+  transform: translateY(-30px) !important;
+  gap: 0.75rem !important;
+}
+
+#welcome .feature-card {
+  padding: 1rem !important;
+}
+
+#welcome .feature-card h3 {
+  font-size: 1rem !important;
+  margin-bottom: 0.25rem !important;
+}
+
+#welcome .feature-card p {
+  font-size: 0.8rem !important;
+  margin-bottom: 0.75rem !important;
+}
+
+/* ===== DARK MODE WELCOME TEXT OVERRIDES ===== */
+/* Using inline style approach via CSS for maximum specificity */
+html body.dark-mode #welcome .welcome-hero .hero-content h2.welcome-title,
+html body.dark-mode #welcome .welcome-hero .hero-content h2 {
+  color: rgb(0, 0, 0) !important;
+  color: black !important;
+  color: #000000 !important;
+}
+
+html body.dark-mode #welcome .welcome-hero .hero-content p.welcome-subtitle,
+html body.dark-mode #welcome .welcome-hero .hero-content p.hero-description,
+html body.dark-mode #welcome .welcome-hero .hero-content p {
+  color: rgb(0, 0, 0) !important;
+  color: black !important;
+  color: #000000 !important;
 }
