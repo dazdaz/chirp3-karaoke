@@ -5,7 +5,8 @@
 set -e
 
 # --- Configuration ---
-PROJECT_ID="my-playground"
+export PROJECT_ID=${DEVSHELL_PROJECT_ID}
+
 if [ -z "$PROJECT_ID" ]; then
   read -p "Enter the GCP Project ID: " PROJECT_ID
 fi
