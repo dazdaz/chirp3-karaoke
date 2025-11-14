@@ -11,6 +11,8 @@ An interactive web-based audio game where players test their music knowledge by 
 - **Audio Processing**: Advanced audio manipulation including pitch shifting and speed changes
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
 
+<img width="1179" height="673" alt="Screenshot 2025-11-14 at 19 59 58" src="https://github.com/user-attachments/assets/78ef2292-bc8e-4a08-8f22-26ae4bcdc4e3" />
+
 ## Technologies Used
 
 - **Backend**: Python Flask
