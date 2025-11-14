@@ -15,7 +15,7 @@ An advanced karaoke application with real-time transcription and scoring using G
 - **Visual Countdown**: 3-2-1 countdown before recording starts
 - **Responsive Design**: Works seamlessly on desktops
 
-<img width="1179" height="673" alt="Screenshot 2025-11-14 at 19 59 58" src="https://github.com/user-attachments/assets/78ef2292-bc8e-4a08-8f22-26ae4bcdc4e3" />
+<img width="1179" height="673" alt="Screenshot 2025-11-14 at 19 59 58" src="https://github.com/user-attachments/assets/4f86f6c1-5a13-4492-a7fd-7b84fadd36d1" />
 
 ## Technologies Used
 
