@@ -1,669 +1,215 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    <title>Google Cloud Interactive Speech Demo</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', path='style.css') }}?v={{ range(1000, 9999) | random }}"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Debug Panel -->
-    <div id="debug-panel" style="position: fixed; bottom: 10px; right: 10px; width: 400px; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.9); color: #0f0; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; z-index: 10000; display: none;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-        <strong>Debug Console</strong>
-        <button onclick="document.getElementById('debug-panel').style.display='none'" style="background: #f00; color: #fff; border: none; padding: 2px 8px; cursor: pointer; border-radius: 3px;">×</button>
-      </div>
-      <div id="debug-content"></div>
-    </div>
-    
-    <div class="app-container">
-      <header class="modern-header">
-        <div class="header-container">
-          <div class="logo-section">
-            <div class="logo">
-              <img src="{{ url_for('static', path='logo.svg') }}" alt="Chirp Demo Logo">
-            </div>
-            <div class="brand-info">
-              <h1>Google Cloud Interactive Speech Demo</h1>
-              <span class="subtitle">Google AI Audio Model Chirp 2+3</span>
-            </div>
-          </div>
-          
-          <nav class="header-nav">
-            <div class="nav-tabs">
-              <button class="tab-link active" data-tab="welcome">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
-              </button>
-              <button class="tab-link" data-tab="singing-contest">
-                <i class="fas fa-microphone"></i>
-                <span>Sing</span>
-              </button>
-              <button class="tab-link" data-tab="learning-contest">
-                <i class="fas fa-headphones"></i>
-                <span>Listen</span>
-              </button>
-              <button class="tab-link" data-tab="sentiment-analysis">
-                <i class="fas fa-phone"></i>
-                <span>Analyze</span>
-              </button>
-            </div>
-          </nav>
+<head>
+    <meta charset="UTF-8">
+    <title>Chirp Karaoke Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; }
+        
+        /* Karaoke Styles */
+        .lyric-line { 
+            transition: all 0.3s ease; 
+            opacity: 0.5; 
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+        }
+        .lyric-line:hover { background: rgba(255,255,255,0.1); opacity: 0.8; }
+        
+        .lyric-active { 
+            opacity: 1; 
+            transform: scale(1.05); 
+            color: #facc15; /* Yellow */
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-slate-900 to-black">
 
-          <div class="theme-switcher">
-            <button id="theme-toggle-button" class="theme-btn">
-                <i class="fas fa-moon"></i>
-                <i class="fas fa-sun"></i>
-            </button>
-          </div>
-        </div>
-      </header>
+    <div class="glass w-full max-w-6xl p-6 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-6 h-[85vh]">
+        
+        <!-- LEFT: Controls (3 Cols) -->
+        <div class="lg:col-span-4 flex flex-col gap-4 border-r border-white/10 pr-6">
+            <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                KARAOKE PRO
+            </h1>
 
-      <main class="main-content">
-        <div id="welcome" class="tab-pane active">
-          <div class="welcome-hero">
-            <div class="hero-content">
-              <div class="hero-icon">
-                <i class="fas fa-waveform-lines"></i>
-              </div>
-              <h2 class="welcome-title">Welcome to the Interactive Speech Demo</h2>
-              <p class="hero-description welcome-subtitle">
-                Explore the advanced capabilities of Google's Chirp model for audio processing and speech recognition through interactive demonstrations.
-              </p>
-              
-              <div class="feature-grid">
-                <div class="feature-card" data-tab="singing-contest">
-                  <div class="feature-icon">
-                    <i class="fas fa-microphone"></i>
-                  </div>
-                  <h3>Singing Contest</h3>
-                  <p>Test your vocal accuracy by singing specific lyrics</p>
-                  <button class="feature-btn tab-link" data-tab="singing-contest">
-                    Try It <i class="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-                
-                <div class="feature-card" data-tab="learning-contest">
-                  <div class="feature-icon">
-                    <i class="fas fa-headphones"></i>
-                  </div>
-                  <h3>Listening Contest</h3>
-                  <p>Listen and transcribe phrases to test your comprehension</p>
-                  <button class="feature-btn tab-link" data-tab="learning-contest">
-                    Try It <i class="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-                
-                <div class="feature-card" data-tab="sentiment-analysis">
-                  <div class="feature-icon">
-                    <i class="fas fa-phone"></i>
-                  </div>
-                  <h3>Call Analysis</h3>
-                  <p>See how Chirp transcribes calls with multiple speakers</p>
-                  <button class="feature-btn tab-link" data-tab="sentiment-analysis">
-                    Try It <i class="fas fa-arrow-right"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div id="singing-contest" class="tab-pane">
-          <div class="contest-layout">
-            <div class="contest-main">
-              <div class="content-card modern-card">
-                <div class="card-header">
-                  <div class="header-icon">
-                    <i class="fas fa-microphone"></i>
-                  </div>
-                  <div class="header-text">
-                    <h2>Chirp Singing Contest</h2>
-                    <p class="card-subtitle">
-                      Sing the lyrics accurately to earn points based on accuracy, confidence, and timing.
-                    </p>
-                  </div>
-                </div>
-                
-                <div class="interactive-area">
-                  <div id="countdown-overlay" class="countdown-overlay-container hidden">
-                    <div id="countdown-overlay-text"></div>
-                  </div>
-                  <div class="control-section">
-                    <div class="song-selection-container">
-                      <label class="input-label">
-                        <i class="fas fa-music"></i>
-                        Choose Your Song
-                      </label>
-                      <div id="song-select" class="custom-select modern-select">
-                        <div class="select-trigger">
-                          <span>Select a song first</span>
-                          <i class="fas fa-chevron-down arrow"></i>
-                        </div>
-                        <div class="options">
-                          <div class="option" data-value="wish">
-                            <i class="fas fa-gift"></i>
-                            Merry Christmas
-                          </div>
-                          <div class="option" data-value="thunderstruck">
-                            <i class="fas fa-bolt"></i>
-                            AC/DC - Thunderstruck
-                          </div>
-                          <div class="option" data-value="sweet_child">
-                            <i class="fas fa-guitar"></i>
-                            Guns N' Roses - Sweet Child O' Mine
-                          </div>
-                          <div class="option" data-value="livin_on_a_prayer">
-                            <i class="fas fa-praying-hands"></i>
-                            Bon Jovi - Livin' On A Prayer
-                          </div>
-                          <div class="option" data-value="bohemian_rhapsody">
-                            <i class="fas fa-theater-masks"></i>
-                            Queen - Bohemian Rhapsody
-                          </div>
-                          <div class="option" data-value="dont_stop_believin">
-                            <i class="fas fa-train"></i>
-                            Journey - Don't Stop Believin'
-                          </div>
-                          <div class="option" data-value="shape_of_you">
-                            <i class="fas fa-heart"></i>
-                            Ed Sheeran - Shape of You
-                          </div>
-                          <div class="option" data-value="in_the_end">
-                            <i class="fas fa-compact-disc"></i>
-                            Linkin Park - In the End
-                          </div>
-                          <div class="option" data-value="like_a_prayer">
-                            <i class="fas fa-cross"></i>
-                            Madonna - Like a Prayer
-                          </div>
-                          <div class="option" data-value="shake_it_off">
-                            <i class="fas fa-sparkles"></i>
-                            Taylor Swift - Shake It Off
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div class="action-section">
-                      <div class="controls-row">
-                        <div class="timing-guide-toggle">
-                          <label class="toggle-switch">
-                            <input type="checkbox" id="timing-guide-toggle" checked>
-                            <span class="toggle-slider"></span>
-                          </label>
-                          <span class="toggle-label">
-                            <i class="fas fa-highlighter"></i>
-                            Lyric Highlighting
-                          </span>
-                        </div>
-                        <button id="caption-button" class="primary-btn" disabled>
-                          <i class="fas fa-microphone"></i>
-                          Start Singing
-                        </button>
-                      </div>
-                      <p class="prompt">
-                        <i class="fas fa-info-circle"></i>
-                        Press 'Start Singing' and the microphone is yours! Good luck!
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div id="timer-container" class="timer-section hidden">
-                    <div id="countdown-text" class="countdown-display"></div>
-                    <div id="progress-bar-container" class="progress-container">
-                      <div id="progress-bar" class="progress-fill"></div>
-                    </div>
-                  </div>
-                  
-                  <div class="results-section">
-                    <div class="output-container">
-                      <pre id="refrain-output" class="refrain-display"></pre>
-                      <pre id="caption-output" class="caption-display"></pre>
-                      <div id="final-score-output" class="score-display" style="display: none;"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <!-- Song Select -->
+            <div>
+                <label class="text-xs font-bold text-gray-500 uppercase">Select Track</label>
+                <select id="songSelect" class="w-full mt-2 bg-slate-800 border border-slate-600 rounded-xl p-3 text-white outline-none">
+                    <option value="" disabled selected>Choose a song...</option>
+                    {% for song in songs %}
+                        <option value="{{ song.id }}" 
+                                data-file="{{ url_for('static', filename='songs/' + song.filename) }}"
+                                data-map='{{ song.lyrics_map | tojson | safe }}'>
+                            {{ song.title }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <aside class="contest-sidebar">
-              <div class="leaderboard-card modern-card">
-                <div class="card-header">
-                  <div class="header-icon">
-                    <i class="fas fa-trophy"></i>
-                  </div>
-                  <div class="header-text">
-                    <h2>Top 5 Singers</h2>
-                    <p class="card-subtitle">Best Scores</p>
-                  </div>
-                </div>
-                <div class="leaderboard-content">
-                  <table class="highscore-table modern-table">
-                    <thead>
-                      <tr>
-                        <th><i class="fas fa-medal"></i> Rank</th>
-                        <th><i class="fas fa-user"></i> Name</th>
-                        <th><i class="fas fa-star"></i> Points</th>
-                      </tr>
-                    </thead>
-                    <tbody id="high-scores-body">
-                      <!-- Scores will be inserted here by script.js -->
-                    </tbody>
-                  </table>
-                  <button id="reset-singing-scores" class="reset-scores-btn">
-                    <i class="fas fa-redo"></i>
-                    Reset Scores
-                  </button>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </div>
-
-        <div id="learning-contest" class="tab-pane">
-          <div class="contest-layout">
-            <div class="contest-main">
-              <div class="content-card modern-card">
-                <div class="card-header">
-                  <div class="header-icon">
-                    <i class="fas fa-headphones"></i>
-                  </div>
-                  <div class="header-text">
-                    <h2>Language Learning</h2>
-                    <p class="card-subtitle">
-                      Listen carefully and transcribe phrases to learn new languages
-                    </p>
-                  </div>
-                </div>
-                
-                <div class="interactive-area">
-                  <div class="listening-section">
-                    <div class="song-selection-container">
-                      <label class="input-label">
-                        <i class="fas fa-language"></i>
-                        Choose a Language
-                      </label>
-                      <div id="language-select-learning" class="custom-select modern-select">
-                        <div class="select-trigger">
-                          <span>English</span>
-                          <i class="fas fa-chevron-down arrow"></i>
-                        </div>
-                        <div class="options">
-                          <div class="option selected" data-value="en-US"><i class="fas fa-flag-usa"></i> English</div>
-                          <div class="option" data-value="fr-FR"><i class="fas fa-flag"></i> French</div>
-                          <div class="option" data-value="ja-JP"><i class="fas fa-flag"></i> Japanese</div>
-                          <div class="option" data-value="es-ES"><i class="fas fa-flag"></i> Spanish</div>
-                          <div class="option" data-value="pt-BR"><i class="fas fa-flag"></i> Portuguese</div>
-                          <div class="option" data-value="de-DE"><i class="fas fa-flag"></i> German</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="audio-controls">
-                      <p class="prompt">
-                        <i class="fas fa-info-circle"></i>
-                        Press 'Play Phrase' and write what you hear! Good luck!
-                      </p>
-                      <audio id="audio-player" style="display: none;"></audio>
-                      <button id="listen-btn" class="primary-btn">
-                        <i class="fas fa-play"></i>
-                        Play Phrase
-                      </button>
-                    </div>
-
-                    <div class="answer-section">
-                      <label class="input-label">
-                        <i class="fas fa-keyboard"></i>
-                        Your Answer
-                      </label>
-                      <div class="input-group">
-                        <input
-                          type="text"
-                          id="answer-input"
-                          class="modern-input"
-                          placeholder="Type the phrase you heard..."
-                        />
-                        <button id="check-btn" class="secondary-btn" disabled>
-                          <i class="fas fa-check"></i>
-                          Submit
-                        </button>
-                      </div>
-                    </div>
-
-                    <div id="feedback" class="feedback-section">
-                      <!-- Round feedback will appear here -->
-                    </div>
-
-                    <div class="action-buttons">
-                      <button id="play-again-btn" class="primary-btn" style="display: none;">
-                        <i class="fas fa-redo"></i>
-                        Play Again
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <aside class="contest-sidebar">
-              <input id="score-learning" style="display: none;" />
-              <div class="leaderboard-card modern-card">
-                <div class="card-header">
-                  <div class="header-icon">
-                    <i class="fas fa-trophy"></i>
-                  </div>
-                  <div class="header-text">
-                    <h2>Leaderboard</h2>
-                    <p class="card-subtitle">Best Scores</p>
-                  </div>
-                </div>
-                <div class="leaderboard-content">
-                  <table class="highscore-table modern-table">
-                    <thead>
-                      <tr>
-                        <th><i class="fas fa-medal"></i> Rank</th>
-                        <th><i class="fas fa-user"></i> Name</th>
-                        <th><i class="fas fa-star"></i> Points</th>
-                      </tr>
-                    </thead>
-                    <tbody id="high-scores-body-learning">
-                      <!-- Scores will be inserted here by script.js -->
-                    </tbody>
-                  </table>
-                  <button id="reset-learning-scores" class="reset-scores-btn">
-                    <i class="fas fa-redo"></i>
-                    Reset Scores
-                  </button>
-                </div>
-              </div>
-            </aside>
-          </div>
-        </div>
-
-        <div id="sentiment-analysis" class="tab-pane">
-          <div class="analysis-layout">
-            <div class="content-card modern-card full-width">
-              <div class="card-header">
-                <div class="header-icon">
-                  <i class="fas fa-phone"></i>
-                </div>
-                <div class="header-text">
-                  <h2>Call Analysis</h2>
-                  <p class="card-subtitle">
-                    Demonstration of how Chirp transcribes calls with multiple speakers and identifies different voices
-                  </p>
-                </div>
-              </div>
-              
-              <div class="interactive-area">
-                <div class="audio-section">
-                  <div class="audio-player-container">
-                    <label class="input-label">
-                      <i class="fas fa-volume-up"></i>
-                      Sample Call Audio
-                    </label>
-                    <audio id="sentiment-audio" src="{{ url_for('static', path='call_br.wav') }}" controls class="modern-audio"></audio>
-                  </div>
-                  
-                  <div class="translation-selector-container">
-                    <label class="input-label">
-                      <i class="fas fa-language"></i>
-                      Translation Language
-                    </label>
-                    <div id="translation-language-select" class="custom-select modern-select">
-                      <div class="select-trigger">
-                        <span>English</span>
-                        <i class="fas fa-chevron-down arrow"></i>
-                      </div>
-                      <div class="options">
-                        <div class="option selected" data-value="en"><i class="fas fa-flag-usa"></i> English</div>
-                        <div class="option" data-value="es"><i class="fas fa-flag"></i> Spanish (Español)</div>
-                        <div class="option" data-value="fr"><i class="fas fa-flag"></i> French (Français)</div>
-                        <div class="option" data-value="de"><i class="fas fa-flag"></i> German (Deutsch)</div>
-                        <div class="option" data-value="it"><i class="fas fa-flag"></i> Italian (Italiano)</div>
-                        <div class="option" data-value="ja"><i class="fas fa-flag"></i> Japanese (日本語)</div>
-                        <div class="option" data-value="zh"><i class="fas fa-flag"></i> Chinese (中文)</div>
-                        <div class="option" data-value="ko"><i class="fas fa-flag"></i> Korean (한국어)</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div class="analysis-controls">
-                    <p class="prompt">
-                      <i class="fas fa-info-circle"></i>
-                      Play the audio above and then click 'Analyze Call' to see the transcription
-                    </p>
-                    <button id="analyze-sentiment-button" class="primary-btn">
-                      <i class="fas fa-brain"></i>
-                      Analyze Call
+            <audio id="audioPlayer" controls class="w-full"></audio>
+            
+            <div class="mt-auto">
+                <div class="flex gap-3 mb-4">
+                    <button id="recordBtn" disabled class="flex-1 py-4 rounded-xl bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:opacity-50 font-bold transition-all">
+                        🎤 SING
                     </button>
-                  </div>
+                    <button id="stopBtn" disabled class="flex-1 py-4 rounded-xl bg-red-600 hover:bg-red-500 disabled:bg-slate-700 disabled:opacity-50 font-bold transition-all">
+                        ⏹ STOP
+                    </button>
                 </div>
-                
-                <div class="sentiment-results"></div>
-                
-                <div id="analysis-container" class="analysis-results" style="display: none;">
-                  <div id="loading-spinner" class="loading-section">
-                    <div class="spinner"></div>
-                    <p>Processing audio...</p>
-                  </div>
-                  
-                  <div id="analysis-message" class="results-section" style="display: none;">
-                    <div class="results-header">
-                      <h3>
-                        <i class="fas fa-comments"></i>
-                        Conversation Transcript
-                      </h3>
-                      <p class="results-subtitle">Automatic speaker identification and accurate transcription</p>
-                    </div>
-                    
-                    <div class="conversation-container">
-                      <table id="analysis-table" class="conversation-table" style="display: none;">
-                        <thead>
-                          <tr>
-                            <th><i class="fas fa-user"></i> Speaker</th>
-                            <th><i class="fas fa-comment"></i> Transcription</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr class="speaker-0">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge agent">
-                                <i class="fas fa-headset"></i>
-                                <span>Agent</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Meu nome é Bruno, bom dia. Em que posso ajudar?</div>
-                              <div class="translation-text">My name is Bruno, good morning. How can I help you?</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-1">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge customer">
-                                <i class="fas fa-user"></i>
-                                <span>Customer</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Bom dia. Eu tô ligando porque a minha fatura veio com 50 reais em serviços adicionais que eu não contratei e para piorar, viajei para Santos e Belo Horizonte na semana passada e fiquei totalmente sem sinal, um absurdo.</div>
-                              <div class="translation-text">Good morning. I'm calling because my bill came with 50 reais in additional services that I didn't contract, and to make it worse, I traveled to Santos and Belo Horizonte last week and had no signal at all, it's absurd.</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-0">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge agent">
-                                <i class="fas fa-headset"></i>
-                                <span>Agent</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Entendo perfeitamente a sua frustração, senhora. Peço desculpas pelo transtorno. Só um momento, por favor, vou verificar seu cadastro.</div>
-                              <div class="translation-text">I perfectly understand your frustration, ma'am. I apologize for the inconvenience. Just a moment, please, I'll check your account.</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-1">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge customer">
-                                <i class="fas fa-user"></i>
-                                <span>Customer</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Hum.</div>
-                              <div class="translation-text">Hmm.</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-0">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge agent">
-                                <i class="fas fa-headset"></i>
-                                <span>Agent</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Certo, localizei aqui. Realmente houve um erro de tarifação e registramos uma instabilidade na cobertura dessas regiões.</div>
-                              <div class="translation-text">Right, I found it here. There was indeed a billing error and we registered instability in the coverage of those regions.</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-1">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge customer">
-                                <i class="fas fa-user"></i>
-                                <span>Customer</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">E então?</div>
-                              <div class="translation-text">And so?</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-0">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge agent">
-                                <i class="fas fa-headset"></i>
-                                <span>Agent</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Já estornei o valor cobrado indevidamente e pela falha no serviço, estou aplicando agora mesmo um desconto de 40% na sua próxima fatura como compensação. Pode ser?</div>
-                              <div class="translation-text">I've already reversed the amount charged incorrectly and for the service failure, I'm applying a 40% discount on your next bill as compensation right now. Is that okay?</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-1">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge customer">
-                                <i class="fas fa-user"></i>
-                                <span>Customer</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Nossa, 40%? Perfeito, assim sim. Resolvido então, muito obrigado.</div>
-                              <div class="translation-text">Wow, 40%? Perfect, that's great. Resolved then, thank you very much.</div>
-                            </td>
-                          </tr>
-                          <tr class="speaker-0">
-                            <td class="speaker-cell">
-                              <div class="speaker-badge agent">
-                                <i class="fas fa-headset"></i>
-                                <span>Agent</span>
-                              </div>
-                            </td>
-                            <td class="message-cell">
-                              <div class="original-text">Eu que agradeço o contato. Tenha um ótimo dia.</div>
-                              <div class="translation-text">I thank you for the contact. Have a great day.</div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <div id="status" class="text-center text-blue-400 text-xs font-bold uppercase">Ready</div>
             </div>
-          </div>
         </div>
-    </main>
 
-      <!-- Modern Modal for High Score Name Input -->
-      <div id="highscore-modal" class="modal-overlay modern-modal" style="display: none;">
-        <div class="modal-content">
-          <div class="modal-header">
-            <div class="modal-icon">
-              <i class="fas fa-trophy"></i>
+        <!-- RIGHT: Teleprompter (8 Cols) -->
+        <div class="lg:col-span-8 flex flex-col relative overflow-hidden bg-slate-900/50 rounded-2xl border border-white/5">
+            <!-- Scrollable Lyrics Container -->
+            <div id="lyricsContainer" class="flex-1 overflow-y-auto p-8 text-center space-y-4 scroll-smooth">
+                <div class="text-gray-500 italic mt-20">Select a song to load lyrics...</div>
             </div>
-            <h2>New High Score!</h2>
-          </div>
-          <div class="modal-body">
-            <p id="modal-score-text" class="score-announcement"></p>
-            <div class="input-group">
-              <label class="input-label">
-                <i class="fas fa-user"></i>
-                Your Name
-              </label>
-              <input type="text" id="player-name-input" class="modern-input" placeholder="Enter your name" maxlength="20">
+            
+            <!-- Score Overlay -->
+            <div id="scoreOverlay" class="absolute inset-0 bg-black/90 hidden flex-col items-center justify-center z-20">
+                <div class="text-6xl font-black text-yellow-400 mb-2" id="scoreValue">0%</div>
+                <div class="text-gray-300 mb-6">Match Score</div>
+                <button onclick="closeScore()" class="px-6 py-2 bg-slate-700 rounded-full hover:bg-slate-600">Close</button>
             </div>
-          </div>
-          <div class="modal-buttons">
-            <button id="modal-save-button" class="primary-btn">
-              <i class="fas fa-save"></i>
-              Save
-            </button>
-            <button id="modal-cancel-button" class="secondary-btn">
-              <i class="fas fa-times"></i>
-              Cancel
-            </button>
-          </div>
         </div>
-      </div>
-
-      <!-- Modern Modal for Learning Contest High Score -->
-      <div id="highscore-modal-learning" class="modal-overlay modern-modal" style="display: none;">
-        <div class="modal-content">
-          <div class="modal-header">
-            <div class="modal-icon">
-              <i class="fas fa-trophy"></i>
-            </div>
-            <h2>New High Score!</h2>
-          </div>
-          <div class="modal-body">
-            <p id="modal-score-text-learning" class="score-announcement"></p>
-            <div class="input-group">
-              <label class="input-label">
-                <i class="fas fa-user"></i>
-                Your Name
-              </label>
-              <input type="text" id="player-name-input-learning" class="modern-input" placeholder="Enter your name" maxlength="20">
-            </div>
-          </div>
-          <div class="modal-buttons">
-            <button id="modal-save-button-learning" class="primary-btn">
-              <i class="fas fa-save"></i>
-              Save
-            </button>
-            <button id="modal-cancel-button-learning" class="secondary-btn">
-              <i class="fas fa-times"></i>
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
 
-    <script src="{{ url_for('static', path='script.js') }}?v={{ range(1000, 9999) | random }}"></script>
-  </body>
+    <script>
+        const songSelect = document.getElementById('songSelect');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        
+        let mediaRecorder, audioChunks = [];
+        let currentLyricsMap = [];
+
+        // --- LOAD SONG ---
+        songSelect.addEventListener('change', (e) => {
+            const opt = e.target.selectedOptions[0];
+            
+            // 1. Load Audio
+            // Cache bust to ensure we get the right file
+            audioPlayer.src = opt.dataset.file + "?t=" + Date.now();
+            
+            // 2. Load Lyrics Map
+            currentLyricsMap = JSON.parse(opt.dataset.map);
+            renderLyrics(currentLyricsMap);
+            
+            recordBtn.disabled = false;
+            statusDiv.innerText = "Ready to Sing";
+        });
+
+        // --- RENDER LYRICS TO DOM ---
+        function renderLyrics(map) {
+            lyricsContainer.innerHTML = "";
+            // Add padding top/bottom so first/last lines center
+            let pad = document.createElement('div'); pad.style.height = "40%"; lyricsContainer.appendChild(pad.cloneNode());
+            
+            map.forEach((line, index) => {
+                const div = document.createElement('div');
+                div.className = "lyric-line text-2xl md:text-3xl font-bold text-gray-400";
+                div.innerText = line.text;
+                div.id = "line-" + index;
+                div.dataset.time = line.time;
+                
+                // Click to Seek Feature
+                div.onclick = () => {
+                    audioPlayer.currentTime = line.time;
+                    audioPlayer.play();
+                };
+                
+                lyricsContainer.appendChild(div);
+            });
+            
+            lyricsContainer.appendChild(pad);
+        }
+
+        // --- SYNC ENGINE ---
+        audioPlayer.ontimeupdate = () => {
+            const time = audioPlayer.currentTime;
+            
+            // Find current active line
+            // We look for the line where (currentTime >= lineTime)
+            let activeIndex = -1;
+            for(let i = 0; i < currentLyricsMap.length; i++) {
+                if(time >= currentLyricsMap[i].time) {
+                    activeIndex = i;
+                } else {
+                    break; 
+                }
+            }
+
+            // Update UI
+            document.querySelectorAll('.lyric-line').forEach((el, idx) => {
+                if (idx === activeIndex) {
+                    el.classList.add('lyric-active');
+                    el.classList.remove('text-gray-400');
+                    // Auto-scroll
+                    el.scrollIntoView({ behavior: "smooth", block: "center" });
+                } else {
+                    el.classList.remove('lyric-active');
+                    el.classList.add('text-gray-400');
+                }
+            });
+        };
+
+        // --- RECORDING LOGIC ---
+        recordBtn.addEventListener('click', async () => {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = submitRecording;
+                mediaRecorder.start();
+                
+                audioPlayer.play();
+                recordBtn.disabled = true;
+                stopBtn.disabled = false;
+                statusDiv.innerText = "🔴 Recording...";
+            } catch (e) { alert("Mic Error"); }
+        });
+
+        stopBtn.addEventListener('click', () => {
+            mediaRecorder.stop();
+            audioPlayer.pause();
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+        });
+
+        async function submitRecording() {
+            statusDiv.innerText = "⏳ Scoring...";
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const fd = new FormData();
+            fd.append('audio_data', blob);
+            fd.append('song_id', songSelect.value);
+
+            const res = await fetch('/transcribe', { method: 'POST', body: fd });
+            const data = await res.json();
+            
+            document.getElementById('scoreOverlay').classList.remove('hidden');
+            document.getElementById('scoreOverlay').classList.add('flex');
+            document.getElementById('scoreValue').innerText = (data.score || 0) + "%";
+            statusDiv.innerText = "Done";
+        }
+
+        window.closeScore = () => {
+            document.getElementById('scoreOverlay').classList.add('hidden');
+            document.getElementById('scoreOverlay').classList.remove('flex');
+        };
+    </script>
+</body>
 </html>
+

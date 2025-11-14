@@ -1,4 +1,5 @@
 #!/bin/bash
+# Filename: cleanup-iam.sh
 
 # Chirp Demo - IAM Cleanup Script
 # This script removes the service account and its permissions created for the Chirp Demo application

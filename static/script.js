@@ -1,3 +1,4 @@
+// Filename: script.js
 
 // Suppress common browser extension errors that aren't related to our app
 window.addEventListener('error', function(e) {

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Filename: deploy.sh
 
 # Exit on error
 set -e

@@ -1,4 +1,5 @@
 #!/bin/bash
+# Filename: setup-iam.sh
 
 # Chirp Demo - IAM Setup Script
 # This script creates a service account and grants necessary permissions for the Chirp Demo application
