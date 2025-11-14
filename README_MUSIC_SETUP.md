@@ -1,6 +1,6 @@
-# Chirp3 Music Setup Tool
+# Chirp3-Karaoke Music Setup Tool
 
-This tool allows you to download MP3 files from Bandcamp URLs and populate the `static/songs` directory for use with Chirp3.
+This tool allows you to download MP3 files from Bandcamp URLs and populate the `static/songs` directory for use with Chirp3-Karaoke.
 
 ## Features
 
@@ -51,9 +51,11 @@ This removes all downloaded files and resets the songs database.
 ## File Structure
 
 ```
-chirp3/
+chirp3-karaoke/
 ├── setup_music.py          # Main script
-├── songs.json              # Track metadata database
+├── songs.json              # Track metadata database (gitignored)
+├── artists.sh              # Artist data management script
+├── addcomment.py           # Add comments to tracks
 └── static/
     └── songs/              # Downloaded MP3 files
         ├── track_1.mp3
@@ -95,9 +97,10 @@ The tool works with any Bandcamp album URL in the format:
 
 ## Requirements
 
-- Python 3.x
+- Python 3.8 or higher
 - Standard library modules only (no external dependencies)
 - Internet connection for downloading
+- Flask and other dependencies for the main application (see requirements.txt)
 
 ## Notes
 
@@ -105,6 +108,8 @@ The tool works with any Bandcamp album URL in the format:
 - Respect artists' rights and Bandcamp's terms of service
 - Some tracks may not be downloadable due to artist restrictions
 - The tool preserves existing songs and adds new ones to the database
+- The `songs.json` file is gitignored to avoid committing downloaded content metadata
+- Use the `artists.sh` script to manage artist-specific operations
 
 ## Troubleshooting
 
