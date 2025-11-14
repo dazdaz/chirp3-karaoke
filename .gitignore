@@ -130,6 +130,7 @@ Thumbs.db
 /chirp-demo-credentials.json
 *.log
 songs.json
+leaderboard.json
 
 # Media files (should be downloaded locally, not stored in repo)
 *.mp3
