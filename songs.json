@@ -2,422 +2,251 @@
   "bohemian_rhapsody": {
     "title": "Bohemian Rhapsody",
     "filename": "bohemian_rhapsody.mp3",
-    "lyrics": "Is this the real life?\nIs this just fantasy?\nCaught in a landslide\nNo escape from reality\nOpen your eyes\nLook up to the skies and see",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Is this the real life?"
-      },
-      {
-        "time": 6.0,
-        "text": "Is this just fantasy?"
-      },
-      {
-        "time": 10.0,
-        "text": "Caught in a landslide"
-      },
-      {
-        "time": 14.0,
-        "text": "No escape from reality"
-      },
-      {
-        "time": 18.0,
-        "text": "Open your eyes"
-      },
-      {
-        "time": 22.0,
-        "text": "Look up to the skies and see"
-      }
-    ]
+    "lyrics": "",
+    "lyrics_map": []
   },
-  "livin_on_a_prayer": {
-    "title": "Livin' on a Prayer",
-    "filename": "livin_on_a_prayer.mp3",
-    "lyrics": "Tommy used to work on the docks\nUnion's been on strike\nHe's down on his luck\nIt's tough, so tough\nGina works the diner all day\nWorking for her man",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Tommy used to work on the docks"
-      },
-      {
-        "time": 6.0,
-        "text": "Union's been on strike"
-      },
-      {
-        "time": 10.0,
-        "text": "He's down on his luck"
-      },
-      {
-        "time": 14.0,
-        "text": "It's tough, so tough"
-      },
-      {
-        "time": 18.0,
-        "text": "Gina works the diner all day"
-      },
-      {
-        "time": 22.0,
-        "text": "Working for her man"
-      }
-    ]
-  },
-  "dont_stop_believin": {
-    "title": "Don't Stop Believin'",
-    "filename": "dont_stop_believin.mp3",
-    "lyrics": "Just a small town girl\nLivin' in a lonely world\nShe took the midnight train\nGoin' anywhere\nJust a city boy\nBorn and raised in South Detroit",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Just a small town girl"
-      },
-      {
-        "time": 6.0,
-        "text": "Livin' in a lonely world"
-      },
-      {
-        "time": 10.0,
-        "text": "She took the midnight train"
-      },
-      {
-        "time": 14.0,
-        "text": "Goin' anywhere"
-      },
-      {
-        "time": 18.0,
-        "text": "Just a city boy"
-      },
-      {
-        "time": 22.0,
-        "text": "Born and raised in South Detroit"
-      }
-    ]
-  },
-  "dancing_queen": {
-    "title": "Dancing Queen",
-    "filename": "dancing_queen.mp3",
-    "lyrics": "You can dance\nYou can jive\nHaving the time of your life\nOoh, see that girl\nWatch that scene\nDigging the dancing queen",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "You can dance"
-      },
-      {
-        "time": 6.0,
-        "text": "You can jive"
-      },
-      {
-        "time": 10.0,
-        "text": "Having the time of your life"
-      },
-      {
-        "time": 14.0,
-        "text": "Ooh, see that girl"
-      },
-      {
-        "time": 18.0,
-        "text": "Watch that scene"
-      },
-      {
-        "time": 22.0,
-        "text": "Digging the dancing queen"
-      }
-    ]
-  },
-  "i_will_survive": {
-    "title": "I Will Survive",
-    "filename": "i_will_survive.mp3",
-    "lyrics": "At first I was afraid\nI was petrified\nKept thinking I could never live\nWithout you by my side\nBut then I spent so many nights\nThinking how you did me wrong",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "At first I was afraid"
-      },
-      {
-        "time": 6.0,
-        "text": "I was petrified"
-      },
-      {
-        "time": 10.0,
-        "text": "Kept thinking I could never live"
-      },
-      {
-        "time": 14.0,
-        "text": "Without you by my side"
-      },
-      {
-        "time": 18.0,
-        "text": "But then I spent so many nights"
-      },
-      {
-        "time": 22.0,
-        "text": "Thinking how you did me wrong"
-      }
-    ]
-  },
-  "sweet_caroline": {
-    "title": "Sweet Caroline",
-    "filename": "sweet_caroline.mp3",
-    "lyrics": "Sweet Caroline\nGood times never seemed so good\nI've been inclined\nTo believe they never would\nBut now I\nLook at the night",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Sweet Caroline"
-      },
-      {
-        "time": 6.0,
-        "text": "Good times never seemed so good"
-      },
-      {
-        "time": 10.0,
-        "text": "I've been inclined"
-      },
-      {
-        "time": 14.0,
-        "text": "To believe they never would"
-      },
-      {
-        "time": 18.0,
-        "text": "But now I"
-      },
-      {
-        "time": 22.0,
-        "text": "Look at the night"
-      }
-    ]
-  },
-  "imagine": {
-    "title": "Imagine",
-    "filename": "imagine.mp3",
-    "lyrics": "Imagine there's no heaven\nIt's easy if you try\nNo hell below us\nAbove us only sky\nImagine all the people\nLiving for today",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Imagine there's no heaven"
-      },
-      {
-        "time": 6.0,
-        "text": "It's easy if you try"
-      },
-      {
-        "time": 10.0,
-        "text": "No hell below us"
-      },
-      {
-        "time": 14.0,
-        "text": "Above us only sky"
-      },
-      {
-        "time": 18.0,
-        "text": "Imagine all the people"
-      },
-      {
-        "time": 22.0,
-        "text": "Living for today"
-      }
-    ]
-  },
-  "hey_jude": {
-    "title": "Hey Jude",
-    "filename": "hey_jude.mp3",
-    "lyrics": "Hey Jude, don't make it bad\nTake a sad song and make it better\nRemember to let her into your heart\nThen you can start to make it better",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Hey Jude, don't make it bad"
-      },
-      {
-        "time": 6.0,
-        "text": "Take a sad song and make it better"
-      },
-      {
-        "time": 10.0,
-        "text": "Remember to let her into your heart"
-      },
-      {
-        "time": 14.0,
-        "text": "Then you can start to make it better"
-      }
-    ]
-  },
-  "house_rising_sun": {
-    "title": "House of the Rising Sun",
-    "filename": "house_rising_sun.mp3",
-    "lyrics": "There is a house in New Orleans\nThey call the Rising Sun\nAnd it's been the ruin\nOf many a poor boy\nAnd God, I know I'm one",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "There is a house in New Orleans"
-      },
-      {
-        "time": 6.0,
-        "text": "They call the Rising Sun"
-      },
-      {
-        "time": 10.0,
-        "text": "And it's been the ruin"
-      },
-      {
-        "time": 14.0,
-        "text": "Of many a poor boy"
-      },
-      {
-        "time": 18.0,
-        "text": "And God, I know I'm one"
-      }
-    ]
-  },
-  "folsom_prison": {
-    "title": "Folsom Prison Blues",
-    "filename": "folsom_prison.mp3",
-    "lyrics": "I hear the train a comin'\nIt's rolling round the bend\nAnd I ain't seen the sunshine\nSince I don't know when\nI'm stuck in Folsom prison\nAnd time keeps draggin' on",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "I hear the train a comin'"
-      },
-      {
-        "time": 6.0,
-        "text": "It's rolling round the bend"
-      },
-      {
-        "time": 10.0,
-        "text": "And I ain't seen the sunshine"
-      },
-      {
-        "time": 14.0,
-        "text": "Since I don't know when"
-      },
-      {
-        "time": 18.0,
-        "text": "I'm stuck in Folsom prison"
-      },
-      {
-        "time": 22.0,
-        "text": "And time keeps draggin' on"
-      }
-    ]
-  },
-  "ring_of_fire": {
-    "title": "Ring of Fire",
-    "filename": "ring_of_fire.mp3",
-    "lyrics": "I fell into a burning ring of fire\nI went down, down, down\nAnd the flames went higher\nAnd it burns, burns, burns\nThe ring of fire",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "I fell into a burning ring of fire"
-      },
-      {
-        "time": 6.0,
-        "text": "I went down, down, down"
-      },
-      {
-        "time": 10.0,
-        "text": "And the flames went higher"
-      },
-      {
-        "time": 14.0,
-        "text": "And it burns, burns, burns"
-      },
-      {
-        "time": 18.0,
-        "text": "The ring of fire"
-      }
-    ]
-  },
-  "la_bamba": {
-    "title": "La Bamba",
-    "filename": "la_bamba.mp3",
-    "lyrics": "Para bailar la bamba\nPara bailar la bamba\nSe necesita una poca de gracia\nUna poca de gracia pa' mi pa' ti\nY arriba y arriba",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Para bailar la bamba"
-      },
-      {
-        "time": 6.0,
-        "text": "Para bailar la bamba"
-      },
-      {
-        "time": 10.0,
-        "text": "Se necesita una poca de gracia"
-      },
-      {
-        "time": 14.0,
-        "text": "Una poca de gracia pa' mi pa' ti"
-      },
-      {
-        "time": 18.0,
-        "text": "Y arriba y arriba"
-      }
-    ]
-  },
-  "wonderwall": {
-    "title": "Wonderwall",
-    "filename": "wonderwall.mp3",
-    "lyrics": "Today is gonna be the day\nThat they're gonna throw it back to you\nBy now you should've somehow\nRealized what you gotta do",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Today is gonna be the day"
-      },
-      {
-        "time": 6.0,
-        "text": "That they're gonna throw it back to you"
-      },
-      {
-        "time": 10.0,
-        "text": "By now you should've somehow"
-      },
-      {
-        "time": 14.0,
-        "text": "Realized what you gotta do"
-      }
-    ]
+  "stairway_to_heaven": {
+    "title": "Stairway to Heaven",
+    "filename": "stairway_to_heaven.mp3",
+    "lyrics": "",
+    "lyrics_map": []
   },
   "hotel_california": {
     "title": "Hotel California",
     "filename": "hotel_california.mp3",
-    "lyrics": "On a dark desert highway\nCool wind in my hair\nWarm smell of colitas\nRising up through the air",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "On a dark desert highway"
-      },
-      {
-        "time": 6.0,
-        "text": "Cool wind in my hair"
-      },
-      {
-        "time": 10.0,
-        "text": "Warm smell of colitas"
-      },
-      {
-        "time": 14.0,
-        "text": "Rising up through the air"
-      }
-    ]
+    "lyrics": "",
+    "lyrics_map": []
   },
-  "yesterday": {
-    "title": "Yesterday",
-    "filename": "yesterday.mp3",
-    "lyrics": "Yesterday\nAll my troubles seemed so far away\nNow it looks as though they're here to stay\nOh, I believe in yesterday",
-    "lyrics_map": [
-      {
-        "time": 2.0,
-        "text": "Yesterday"
-      },
-      {
-        "time": 6.0,
-        "text": "All my troubles seemed so far away"
-      },
-      {
-        "time": 10.0,
-        "text": "Now it looks as though they're here to stay"
-      },
-      {
-        "time": 14.0,
-        "text": "Oh, I believe in yesterday"
-      }
-    ]
+  "sweet_child_o_mine": {
+    "title": "Sweet Child O' Mine",
+    "filename": "sweet_child_o_mine.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "smells_like_teen_spirit": {
+    "title": "Smells Like Teen Spirit",
+    "filename": "smells_like_teen_spirit.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "enter_sandman": {
+    "title": "Enter Sandman",
+    "filename": "enter_sandman.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "satisfaction": {
+    "title": "(I Can't Get No) Satisfaction",
+    "filename": "satisfaction.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "come_together": {
+    "title": "Come Together",
+    "filename": "come_together.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "comfortably_numb": {
+    "title": "Comfortably Numb",
+    "filename": "comfortably_numb.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "highway_to_hell": {
+    "title": "Highway to Hell",
+    "filename": "highway_to_hell.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "back_in_black": {
+    "title": "Back in Black",
+    "filename": "back_in_black.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "smoke_on_the_water": {
+    "title": "Smoke on the Water",
+    "filename": "smoke_on_the_water.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "dream_on": {
+    "title": "Dream On",
+    "filename": "dream_on.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "sweet_emotion": {
+    "title": "Sweet Emotion",
+    "filename": "sweet_emotion.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "crazy_train": {
+    "title": "Crazy Train",
+    "filename": "crazy_train.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "iron_man": {
+    "title": "Iron Man",
+    "filename": "iron_man.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "paranoid": {
+    "title": "Paranoid",
+    "filename": "paranoid.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "the_trooper": {
+    "title": "The Trooper",
+    "filename": "the_trooper.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "purple_haze": {
+    "title": "Purple Haze",
+    "filename": "purple_haze.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "layla": {
+    "title": "Layla",
+    "filename": "layla.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "sweet_home_alabama": {
+    "title": "Sweet Home Alabama",
+    "filename": "sweet_home_alabama.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "alive": {
+    "title": "Alive",
+    "filename": "alive.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "black_hole_sun": {
+    "title": "Black Hole Sun",
+    "filename": "black_hole_sun.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "man_in_the_box": {
+    "title": "Man in the Box",
+    "filename": "man_in_the_box.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "plush": {
+    "title": "Plush",
+    "filename": "plush.mp3",
+    "lyrics": "",
+    "lyrics_map": []
+  },
+  "bark_at_the_moon_-_ozzy_osbourne_(guitar_backing_t": {
+    "title": "Bark At The Moon - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "bark_at_the_moon_-_ozzy_osbourne_(guitar_backing_t.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 258.926,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "mr_crowley_-_ozzy_osbourne_(guitar_backing_track)": {
+    "title": "Mr Crowley - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "mr_crowley_-_ozzy_osbourne_(guitar_backing_track).mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 296.62,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "i_dont_know_-_ozzy_osbourne_(guitar_backing_track)": {
+    "title": "I Dont Know - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "i_dont_know_-_ozzy_osbourne_(guitar_backing_track).mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 301.897,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "shot_in_the_dark_-_ozzy_osbourne_(guitar_backing_t": {
+    "title": "Shot In The Dark - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "shot_in_the_dark_-_ozzy_osbourne_(guitar_backing_t.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 290.769,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "flying_high_again_-_ozzy_osbourne_(guitar_backing_": {
+    "title": "Flying High Again - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "flying_high_again_-_ozzy_osbourne_(guitar_backing_.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 273.162,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "crazy_train_-_ozzy_osbourne_(guitar_backing_track)": {
+    "title": "Crazy Train - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "crazy_train_-_ozzy_osbourne_(guitar_backing_track).mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 287.608,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "miracle_man_-_ozzy_osbourne_(guitar_backing_track)": {
+    "title": "Miracle Man - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "miracle_man_-_ozzy_osbourne_(guitar_backing_track).mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 227.918,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "mama_i'm_coming_home_-_ozzy_osbourne_(guitar_backi": {
+    "title": "Mama I'm Coming Home - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "mama_i'm_coming_home_-_ozzy_osbourne_(guitar_backi.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 254.824,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "over_the_mountain_-_ozzy_osbourne_(guitar_backing_": {
+    "title": "Over The Mountain - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "over_the_mountain_-_ozzy_osbourne_(guitar_backing_.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 277.055,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
+  },
+  "no_more_tears_-_ozzy_osbourne_(guitar_backing_trac": {
+    "title": "No More Tears - Ozzy Osbourne (Guitar Backing Track)",
+    "filename": "no_more_tears_-_ozzy_osbourne_(guitar_backing_trac.mp3",
+    "lyrics": "",
+    "lyrics_map": [],
+    "duration": 445.858,
+    "artist": "OZZY OSBOURNE",
+    "album": "Unknown Album",
+    "source_url": "https://palochebeatz.bandcamp.com/album/ozzy-osbourne-guitar-backing-tracks"
   }
 }
