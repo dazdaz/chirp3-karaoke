@@ -5,7 +5,7 @@
 set -e
 
 # --- Configuration ---
-PROJECT_ID="daev-playground"
+PROJECT_ID="my-playground"
 if [ -z "$PROJECT_ID" ]; then
   read -p "Enter the GCP Project ID: " PROJECT_ID
 fi
