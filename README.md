@@ -111,8 +111,7 @@ chirp3-karaoke/
 ├── setup_music.py       # Download and setup music from Bandcamp
 ├── requirements.txt     # Python dependencies
 ├── Dockerfile           # Docker configuration
-├── artists.sh           # Artist data management script
-├── addcomment.py        # Add comments to tracks
+├── artists.sh           # Artist data management script, wraper to setup_music.py
 ├── static/              # Frontend assets
 │   ├── script.js        # Game logic
 │   ├── audio-processor.js  # Audio manipulation
@@ -130,7 +129,6 @@ chirp3-karaoke/
 
 - `setup_music.py` - Download and manage songs from Bandcamp
 - `artists.sh` - Artist data management
-- `addcomment.py` - Add comments to tracks
 - `deploy.sh` - Deploy to cloud services
 - `setup-iam.sh` - Configure IAM permissions
 - `cleanup-iam.sh` - Clean up IAM resources
