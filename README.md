@@ -1,6 +1,6 @@
-# Chirp3 - Audio Recognition Game 🎵
+# Chirp3-Karaoke - Audio Recognition Game 🎵
 
-An interactive web-based audio game where players test their music knowledge by identifying songs from short audio clips. Built with Python Flask and modern web technologies.
+An interactive web-based karaoke and audio recognition game where players test their music knowledge by identifying songs from short audio clips. Built with Python Flask and modern web technologies.
 
 ## Features
 
@@ -32,8 +32,8 @@ An interactive web-based audio game where players test their music knowledge by 
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/dazdaz/chirp3.git
-cd chirp3
+git clone https://github.com/dazdaz/chirp3-karaoke.git
+cd chirp3-karaoke
 ```
 
 2. Install dependencies:
@@ -43,7 +43,8 @@ pip install -r requirements.txt
 
 3. Initialize the song database:
 ```bash
-python setup_data.py
+python setup_music.py <bandcamp_album_url>
+# Or see README_MUSIC_SETUP.md for detailed music setup instructions
 ```
 
 4. Run the application:
@@ -58,8 +59,8 @@ The application will be available at `http://localhost:8080`
 Build and run with Docker:
 
 ```bash
-docker build -t chirp3 .
-docker run -p 8080:8080 chirp3
+docker build -t chirp3-karaoke .
+docker run -p 8080:8080 chirp3-karaoke
 ```
 
 ## Game Modes
@@ -82,20 +83,24 @@ docker run -p 8080:8080 chirp3
 ## Project Structure
 
 ```
-chirp3/
+chirp3-karaoke/
 ├── main.py              # Flask application server
-├── setup_data.py        # Initialize song database
+├── setup_music.py       # Download and setup music from Bandcamp
 ├── requirements.txt     # Python dependencies
-├── Dockerfile          # Docker configuration
-├── static/             # Frontend assets
-│   ├── script.js       # Game logic
+├── Dockerfile           # Docker configuration
+├── artists.sh           # Artist data management script
+├── addcomment.py        # Add comments to tracks
+├── static/              # Frontend assets
+│   ├── script.js        # Game logic
 │   ├── audio-processor.js  # Audio manipulation
-│   ├── style.css       # Styling
-│   └── songs/          # Audio files
-├── templates/          # HTML templates
-│   └── index.html      # Main game interface
-├── songs.json          # Song database
-└── leaderboard.json    # Player scores
+│   ├── style.css        # Styling
+│   └── songs/           # Audio files
+├── templates/           # HTML templates
+│   └── index.html       # Main game interface
+├── songs.json           # Song database (gitignored)
+├── leaderboard.json     # Player scores
+├── README.md            # Main documentation
+└── README_MUSIC_SETUP.md # Music setup guide
 ```
 
 ## Deployment Scripts
@@ -121,4 +126,8 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## Contact
 
-For questions or feedback, please open an issue on the [GitHub repository](https://github.com/dazdaz/chirp3/issues).
+For questions or feedback, please open an issue on the [GitHub repository](https://github.com/dazdaz/chirp3-karaoke/issues).
+
+## Additional Documentation
+
+- [Music Setup Guide](README_MUSIC_SETUP.md) - Detailed instructions for downloading and managing music files
