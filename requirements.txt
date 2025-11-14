@@ -1,2 +1,5 @@
 flask==3.0.0
 google-cloud-speech==2.26.0
+requests
+beautifulsoup4
+jellyfish

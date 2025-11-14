@@ -3,10 +3,12 @@ import logging
 import json
 import difflib
 import re
+import jellyfish  # Requires: uv pip install jellyfish
 from flask import Flask, render_template, request, jsonify
 from google.cloud.speech_v2 import SpeechClient
 from google.cloud.speech_v2.types import RecognitionConfig, RecognizeRequest, RecognitionFeatures
 
+# --- LOGGING SETUP ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 logger = logging.getLogger(__name__)
 
@@ -20,7 +22,7 @@ SONGS_DB_PATH = os.path.join(BASE_DIR, 'songs.json')
 LEADERBOARD_PATH = os.path.join(BASE_DIR, 'leaderboard.json')
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT")
 
-# --- HELPERS ---
+# --- DATA HELPERS ---
 def load_json(path, default=None):
     if not os.path.exists(path): return default if default is not None else {}
     try:
@@ -32,23 +34,25 @@ def save_json(path, data):
         json.dump(data, f, indent=2)
 
 # --- ROUTES ---
-
 @app.route('/')
 def index():
     songs_db = load_json(SONGS_DB_PATH)
     songs_list = []
     
     for key, data in songs_db.items():
-        # CRITICAL FIX: We must ensure 'lyrics_map' exists, even if empty
-        # This prevents the "Undefined" error in the template
         l_map = data.get('lyrics_map', [])
-        
+        start_offset = 0 
+        if l_map and len(l_map) > 0:
+            first_lyric_time = l_map[0].get('time', 0)
+            start_offset = max(0, first_lyric_time - 2)
+            
         songs_list.append({
             "id": key,
             "title": data.get('title', 'Unknown Title'),
             "filename": data.get('filename', ''),
             "lyrics": data.get('lyrics', ''),
-            "lyrics_map": l_map  # <--- THIS WAS MISSING/CAUSING THE ERROR
+            "lyrics_map": l_map,
+            "start_offset": start_offset
         })
         
     return render_template('index.html', songs=songs_list)
@@ -56,25 +60,22 @@ def index():
 @app.route('/leaderboard', methods=['GET', 'POST'])
 def leaderboard():
     data = load_json(LEADERBOARD_PATH, default=[])
-    
     if request.method == 'POST':
         entry = request.json
         if not entry or 'name' not in entry or 'score' not in entry:
             return jsonify({'error': 'Invalid data'}), 400
-            
         data.append(entry)
         data.sort(key=lambda x: x['score'], reverse=True)
-        data = data[:10]
+        data = data[:50]
         save_json(LEADERBOARD_PATH, data)
         return jsonify({'status': 'saved', 'leaderboard': data})
-        
     return jsonify(data)
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
     try:
         client = SpeechClient(client_options={"api_endpoint": API_ENDPOINT})
-    except:
+    except Exception as e:
         return jsonify({'error': 'GCP Client Init Failed'}), 500
 
     audio_file = request.files.get('audio_data')
@@ -82,7 +83,6 @@ def transcribe():
     
     if not audio_file: return jsonify({'error': 'No audio'}), 400
     content = audio_file.read()
-    
     if len(content) < 100: return jsonify({'error': 'Audio too short'}), 400
 
     try:
@@ -90,7 +90,7 @@ def transcribe():
         config = RecognitionConfig(
             auto_decoding_config={},
             language_codes=["en-US"],
-            model="chirp_3",          
+            model="chirp_3", 
             features=RecognitionFeatures(enable_automatic_punctuation=True),
         )
         request_obj = RecognizeRequest(
@@ -100,18 +100,17 @@ def transcribe():
         )
 
         response = client.recognize(request=request_obj)
-        
         transcript_parts = [r.alternatives[0].transcript for r in response.results if r.alternatives]
         full_transcript = " ".join(transcript_parts)
 
-        # Scoring
         score = 0
         comparison_html = full_transcript
         
         songs_db = load_json(SONGS_DB_PATH)
         if song_id and song_id in songs_db:
             target_lyrics = songs_db[song_id].get('lyrics', '')
-            score, comparison_html = calculate_score(full_transcript, target_lyrics)
+            # CALL THE NEW AI SCORING ENGINE
+            score, comparison_html = calculate_score_advanced(full_transcript, target_lyrics)
 
         return jsonify({
             'transcript': full_transcript,
@@ -122,28 +121,118 @@ def transcribe():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-def calculate_score(user_text, official_text):
-    def normalize(text):
-        return re.sub(r'[^\w\s]', '', text).lower().split()
+# --- ADVANCED SCORING ENGINE ---
+def normalize_text(text):
+    """
+    Cleans text and standardizes contractions to match Speech-to-Text output.
+    """
+    t = text.lower()
+    # 1. Remove Punctuation
+    t = re.sub(r'[^\w\s]', '', t)
+    
+    # 2. Standardize Slang (Karaoke Normalization)
+    replacements = {
+        "gonna": "going to",
+        "wanna": "want to",
+        "cause": "because",
+        "cos": "because",
+        "em": "them",
+        "walkin": "walking",
+        "talkin": "talking",
+        "runnin": "running",
+        "singin": "singing",
+        "nothin": "nothing",
+        "im": "i am",
+        "youre": "you are",
+        "cant": "cannot",
+        "dont": "do not",
+        "wont": "will not"
+    }
+    words = t.split()
+    clean_words = [replacements.get(w, w) for w in words]
+    return clean_words
 
-    user_words = normalize(user_text)
-    target_words = normalize(official_text)
+def calculate_score_advanced(user_text, official_text):
+    """
+    Commercial-Grade Fuzzy Matching.
+    Uses Jaro-Winkler similarity instead of binary equality.
+    """
+    user_words = normalize_text(user_text)
+    target_words = normalize_text(official_text)
     
     if not target_words: return 0, user_text
 
+    # SequenceMatcher finds the best alignment of words
     matcher = difflib.SequenceMatcher(None, user_words, target_words)
-    score = int(matcher.ratio() * 100)
+    
+    html_output = []
+    weighted_score = 0.0
+    total_possible = len(target_words)
 
-    html = []
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+        
+        # 1. EXACT MATCH (100% Points)
         if tag == 'equal':
-            html.append(f"<span class='text-green-400 font-bold'>{' '.join(user_words[i1:i2])}</span>")
+            for w in user_words[i1:i2]:
+                html_output.append(f"<span class='text-green-400 font-bold'>{w}</span>")
+                weighted_score += 1.0
+        
+        # 2. REPLACEMENT (Check Similarity)
         elif tag == 'replace':
-            html.append(f"<span class='text-red-400'>{' '.join(user_words[i1:i2])}</span>")
-        elif tag == 'insert':
-             html.append(f"<span class='text-gray-500 opacity-50'>{' '.join(target_words[j1:j2])}</span>")
+            user_segment = user_words[i1:i2]
+            target_segment = target_words[j1:j2]
             
-    return score, " ".join(html)
+            # Compare segments word-by-word or best-fit
+            # Simple approach: Zip them and compare
+            for idx in range(max(len(user_segment), len(target_segment))):
+                u_word = user_segment[idx] if idx < len(user_segment) else ""
+                t_word = target_segment[idx] if idx < len(target_segment) else ""
+                
+                if u_word and t_word:
+                    # Jaro-Winkler is better for short strings/typos
+                    # 1.0 is perfect, 0.0 is distinct
+                    similarity = jellyfish.jaro_winkler_similarity(u_word, t_word)
+                    
+                    if similarity > 0.85:
+                        # Very close (Typos like "crazy" vs "krazy")
+                        html_output.append(f"<span class='text-green-400 font-bold'>{u_word}</span>")
+                        weighted_score += 1.0 # Count as full hit
+                    elif similarity > 0.70:
+                        # Close-ish (Phonetic match like "ya" vs "you")
+                        html_output.append(f"<span class='text-yellow-400 font-bold' title='{int(similarity*100)}% Match'>{u_word}</span>")
+                        weighted_score += 0.8
+                    else:
+                        # Wrong word
+                        html_output.append(f"<span class='text-red-500 line-through opacity-50'>{u_word}</span>")
+                elif u_word:
+                    # Extra word user sang
+                    html_output.append(f"<span class='text-red-500 text-xs opacity-50'>{u_word}</span>")
+                # Missing words handled in next block
+                
+        # 3. MISSING (INSERTION)
+        elif tag == 'insert':
+             missing = " ".join(target_words[j1:j2])
+             html_output.append(f"<span class='text-gray-600 opacity-30'>[{missing}]</span>")
+             
+        # 4. EXTRA WORDS (DELETION)
+        elif tag == 'delete':
+            for w in user_words[i1:i2]:
+                html_output.append(f"<span class='text-red-500 text-xs opacity-50'>{w}</span>")
+
+    # Final Score Calculation
+    if total_possible > 0:
+        final_score = int((weighted_score / total_possible) * 100)
+    else:
+        final_score = 0
+        
+    # Bonus Logic: If score is suspiciously low but word count is similar, 
+    # apply a 'Vibe Boost' (assumes STT failed on slang)
+    if final_score < 50 and len(user_words) > 0:
+        length_ratio = len(user_words) / len(target_words)
+        if 0.8 < length_ratio < 1.2:
+            final_score += 10
+
+    return min(100, final_score), " ".join(html_output)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
