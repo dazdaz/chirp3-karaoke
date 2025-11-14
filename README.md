@@ -61,7 +61,7 @@ pip install -r requirements.txt
 4. Initialize the song database:
 ```bash
 # Download songs from Bandcamp
-python setup_music.py <bandcamp_album_url>
+python setup_music.py <bandcamp_album_url> <name of artist or band>
 # Or see README_MUSIC_SETUP.md for detailed music setup instructions
 ```
 
