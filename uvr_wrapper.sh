@@ -34,56 +34,46 @@ MODEL_VOCAL_FAST="MDX23C-InstVoc HQ"
 MODEL_INSTRUMENTAL="Demucs_v4_hybrid"
 
 print_usage() {
-    cat << EOF
-${BLUE}UVR-CLI Wrapper - Ultimate Vocal Remover Helper${NC}
-
-${GREEN}Usage:${NC}
-  $0 -i <input> -o <output> [options]
-
-${GREEN}Required:${NC}
-  -i <path>         Input file or directory
-  -o <path>         Output directory
-
-${GREEN}Options:${NC}
-  -m <model>        Model to use (auto-detected if not specified)
-                    Options: vocal-hq, vocal-fast, instrumental, demucs
-  -t <target>       Target output: vocals or instrumental (default: instrumental)
-  -f <format>       Force output format: MP3 or FLAC (auto-detected if not specified)
-  -h                Show this help message
-
-${GREEN}Examples:${NC}
-  # Process single file (auto-detect format and model)
-  $0 -i "/path/to/song.flac" -o "/path/to/output/"
-  
-  # Process directory with high-quality vocal removal
-  $0 -i "/Music/Songs/" -o "/Music/Instrumentals/" -m vocal-hq
-  
-  # Extract vocals only
-  $0 -i "/Music/Songs/" -o "/Music/Vocals/" -t vocals -m vocal-fast
-
-${GREEN}Available Models:${NC}
-  vocal-hq         Kim_Vocal_2 - High quality vocal separation
-  vocal-fast       MDX23C-InstVoc HQ - Faster vocal separation
-  instrumental     Demucs_v4_hybrid - Best for instrumental extraction
-  demucs           Same as instrumental
-
-${GREEN}Notes:${NC}
-  - File format (MP3/FLAC) is auto-detected from input files
-  - If processing directory, uses batch + recursive mode
-  - Script checks if UVR-CLI is installed
-EOF
+    printf "${BLUE}UVR-CLI Wrapper - Ultimate Vocal Remover Helper${NC}\n\n"
+    printf "${GREEN}Usage:${NC}\n"
+    printf "  $0 -i <input> -o <output> [options]\n\n"
+    printf "${GREEN}Required:${NC}\n"
+    printf "  -i <path>         Input file or directory\n"
+    printf "  -o <path>         Output directory\n\n"
+    printf "${GREEN}Options:${NC}\n"
+    printf "  -m <model>        Model to use (auto-detected if not specified)\n"
+    printf "                    Options: vocal-hq, vocal-fast, instrumental, demucs\n"
+    printf "  -t <target>       Target output: vocals or instrumental (default: instrumental)\n"
+    printf "  -f <format>       Force output format: MP3 or FLAC (auto-detected if not specified)\n"
+    printf "  -h                Show this help message\n\n"
+    printf "${GREEN}Examples:${NC}\n"
+    printf "  # Process single file (auto-detect format and model)\n"
+    printf "  $0 -i \"/path/to/song.flac\" -o \"/path/to/output/\"\n\n"
+    printf "  # Process directory with high-quality vocal removal\n"
+    printf "  $0 -i \"/Music/Songs/\" -o \"/Music/Instrumentals/\" -m vocal-hq\n\n"
+    printf "  # Extract vocals only\n"
+    printf "  $0 -i \"/Music/Songs/\" -o \"/Music/Vocals/\" -t vocals -m vocal-fast\n\n"
+    printf "${GREEN}Available Models:${NC}\n"
+    printf "  vocal-hq         Kim_Vocal_2 - High quality vocal separation\n"
+    printf "  vocal-fast       MDX23C-InstVoc HQ - Faster vocal separation\n"
+    printf "  instrumental     Demucs_v4_hybrid - Best for instrumental extraction\n"
+    printf "  demucs           Same as instrumental\n\n"
+    printf "${GREEN}Notes:${NC}\n"
+    printf "  - File format (MP3/FLAC) is auto-detected from input files\n"
+    printf "  - If processing directory, uses batch + recursive mode\n"
+    printf "  - Script checks if UVR-CLI is installed\n"
 }
 
 # Check if UVR-CLI is installed
 check_installation() {
     if [ ! -f "$UVR_CLI" ]; then
-        echo -e "${RED}Error: UVR-CLI not found at: $UVR_CLI${NC}"
-        echo -e "${YELLOW}Install with: brew install --cask ultimate-vocal-remover${NC}"
+        printf "${RED}Error: UVR-CLI not found at: $UVR_CLI${NC}\n"
+        printf "${YELLOW}Install with: brew install --cask ultimate-vocal-remover${NC}\n"
         exit 1
     fi
     
     if [ ! -x "$UVR_CLI" ]; then
-        echo -e "${YELLOW}Making UVR-CLI executable...${NC}"
+        printf "${YELLOW}Making UVR-CLI executable...${NC}\n"
         chmod +x "$UVR_CLI"
     fi
 }
@@ -155,20 +145,20 @@ while getopts "i:o:m:t:f:h" opt; do
         t) TARGET="$OPTARG" ;;
         f) FORMAT="$OPTARG" ;;
         h) print_usage; exit 0 ;;
-        \?) echo -e "${RED}Invalid option: -$OPTARG${NC}"; print_usage; exit 1 ;;
+        \?) printf "${RED}Invalid option: -$OPTARG${NC}\n"; print_usage; exit 1 ;;
     esac
 done
 
 # Check required arguments
 if [ -z "$INPUT_PATH" ] || [ -z "$OUTPUT_DIR" ]; then
-    echo -e "${RED}Error: Input and output paths are required${NC}\n"
+    printf "${RED}Error: Input and output paths are required${NC}\n\n"
     print_usage
     exit 1
 fi
 
 # Validate input exists
 if [ ! -e "$INPUT_PATH" ]; then
-    echo -e "${RED}Error: Input path does not exist: $INPUT_PATH${NC}"
+    printf "${RED}Error: Input path does not exist: $INPUT_PATH${NC}\n"
     exit 1
 fi
 
@@ -178,16 +168,16 @@ check_installation
 # Auto-detect format if not specified
 if [ -z "$FORMAT" ]; then
     FORMAT=$(detect_format "$INPUT_PATH")
-    echo -e "${BLUE}Auto-detected format: ${GREEN}$FORMAT${NC}"
+    printf "${BLUE}Auto-detected format: ${GREEN}$FORMAT${NC}\n"
 fi
 
 # Auto-select model if not specified
 if [ -z "$MODEL" ]; then
     MODEL=$(auto_select_model)
-    echo -e "${BLUE}Auto-selected model: ${GREEN}$MODEL${NC}"
+    printf "${BLUE}Auto-selected model: ${GREEN}$MODEL${NC}\n"
 else
     MODEL=$(get_model_name "$MODEL")
-    echo -e "${BLUE}Using model: ${GREEN}$MODEL${NC}"
+    printf "${BLUE}Using model: ${GREEN}$MODEL${NC}\n"
 fi
 
 # Create output directory if it doesn't exist
@@ -196,10 +186,10 @@ mkdir -p "$OUTPUT_DIR"
 # Determine if batch processing is needed
 if [ -d "$INPUT_PATH" ]; then
     IS_BATCH=true
-    echo -e "${BLUE}Processing directory in batch mode${NC}"
+    printf "${BLUE}Processing directory in batch mode${NC}\n"
 else
     IS_BATCH=false
-    echo -e "${BLUE}Processing single file${NC}"
+    printf "${BLUE}Processing single file${NC}\n"
 fi
 
 # Build command
@@ -216,17 +206,17 @@ if [ "$IS_BATCH" = true ]; then
 fi
 
 # Display command
-echo -e "\n${YELLOW}Executing:${NC}"
-echo -e "${GREEN}${CMD[@]}${NC}\n"
+printf "\n${YELLOW}Executing:${NC}\n"
+printf "${GREEN}%s${NC}\n\n" "${CMD[*]}"
 
 # Execute command
 "${CMD[@]}"
 
 # Check exit status
 if [ $? -eq 0 ]; then
-    echo -e "\n${GREEN}✅ Processing completed successfully!${NC}"
-    echo -e "${BLUE}Output saved to: ${GREEN}$OUTPUT_DIR${NC}"
+    printf "\n${GREEN}✅ Processing completed successfully!${NC}\n"
+    printf "${BLUE}Output saved to: ${GREEN}$OUTPUT_DIR${NC}\n"
 else
-    echo -e "\n${RED}❌ Processing failed!${NC}"
+    printf "\n${RED}❌ Processing failed!${NC}\n"
     exit 1
 fi
