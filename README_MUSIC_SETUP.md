@@ -100,7 +100,7 @@ python3 setup_music.py <bandcamp_url> "Artist Name"
 ### Local Files Mode
 1. Scans directory for mp3/ogg/flac files
 2. Reads metadata using mutagen library
-3. Copies files to static/songs directory
+3. Copies files to songs/ directory
 4. Fetches synchronized lyrics
 5. Updates songs.json with track information
 
@@ -128,10 +128,9 @@ chirp3-karaoke/
 ├── mixtape_example.txt         # Example mixtape file
 ├── songs.json                  # Track metadata database
 ├── artists.sh                  # Batch processing script
-└── static/
-    └── songs/                  # Audio files
-        ├── artist_track.mp3
-        └── ...
+└── songs/                      # Audio files directory
+    ├── artist_track.mp3
+    └── ...
 ```
 
 ## Songs Database Format
@@ -188,7 +187,7 @@ Each track in `songs.json` contains:
 ### File Import Issues
 - **No metadata found**: Ensure files have ID3 tags or use "Artist - Title" filename format
 - **Unsupported format**: Only mp3, ogg, and flac are supported
-- **Permission errors**: Ensure write permissions to `static/songs` directory
+- **Permission errors**: Ensure write permissions to `songs/` directory
 
 ### Lyrics Issues
 - **Generic timing used**: Lyrics not found in lrclib.net database

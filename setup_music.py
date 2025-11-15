@@ -17,7 +17,7 @@ from mutagen import File as MutagenFile
 
 # --- CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-SONGS_DIR = os.path.join(BASE_DIR, 'static', 'songs')
+SONGS_DIR = os.path.join(BASE_DIR, 'songs')
 JSON_PATH = os.path.join(BASE_DIR, 'songs.json')
 
 # --- DEFAULT SONG DATA ---

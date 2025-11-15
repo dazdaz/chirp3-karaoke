@@ -1,19 +1,83 @@
-# Example Mixtape File
-# One audio file path per line
-# Lines starting with # are comments
-# Paths can be absolute or relative to this file
+# ===================================================================
+# MIXTAPE FILE FORMAT - How to Create Your Custom Karaoke Collection
+# ===================================================================
+#
+# This file allows you to import songs from different artists as one album!
+# Perfect for creating custom playlists or party collections.
+#
+# HOW IT WORKS:
+# -------------
+# 1. List one audio file path per line
+# 2. Lines starting with # are comments (like this!)
+# 3. Empty lines are ignored
+# 4. Paths can be absolute (/full/path/to/file.mp3) or relative (music/file.mp3)
+# 5. The script automatically extracts artist and title information
+#
+# ARTIST & TITLE DETECTION:
+# -------------------------
+# The script tries multiple methods to get song information (in this order):
+#
+#   1. FILE METADATA (Best): Reads ID3 tags from the audio file
+#      - Artist tag → used as artist
+#      - Title tag → used as title
+#
+#   2. FILENAME PARSING: If no metadata, parses the filename
+#      - Format: "Artist - Title.mp3"
+#      - Example: "Queen - Bohemian Rhapsody.mp3" 
+#        → Artist: "Queen", Title: "Bohemian Rhapsody"
+#
+#   3. FALLBACK: If neither works
+#      - Artist: "Various Artists"
+#      - Title: filename without extension
+#
+# PATH FORMATS:
+# -------------
+# Absolute paths (start with /)
+#   /home/user/Music/Queen - Bohemian Rhapsody.mp3
+#   /Users/john/Downloads/Beatles - Hey Jude.mp3
+#
+# Home directory paths (use ~)
+#   ~/Music/Led Zeppelin - Stairway to Heaven.mp3
+#   ~/Downloads/ACDC - Highway to Hell.mp3
+#
+# Relative paths (relative to this mixtape file's location)
+#   music/song1.mp3
+#   ../shared/Beatles - Let It Be.mp3
+#   collection/rock/Queen - We Will Rock You.mp3
+#
+# USAGE EXAMPLE:
+# --------------
+# python3 setup_music.py --mixtape my_favorites.txt --album "Party Mix 2024"
+#
+# This will:
+# - Read all file paths from my_favorites.txt
+# - Extract artist/title from each file
+# - Copy files to the songs/ directory
+# - Fetch synchronized lyrics automatically
+# - Group all songs under album "Party Mix 2024" in the database
+#
+# TIPS FOR BEST RESULTS:
+# ----------------------
+# ✅ Use files with ID3 tags (most MP3s have these)
+# ✅ Name files like "Artist - Title.mp3" if no tags
+# ✅ Use relative paths for portability
+# ✅ Group similar songs together with comments
+# ✅ Keep this file with your music collection
+#
+# ===================================================================
+# YOUR MIXTAPE STARTS BELOW - Add your song paths here!
+# ===================================================================
 
-# Example with absolute paths:
-# /home/user/Music/Queen - Bohemian Rhapsody.mp3
-# /home/user/Music/Led Zeppelin - Stairway to Heaven.mp3
+# Rock Classics
+# /path/to/Queen - Bohemian Rhapsody.mp3
+# /path/to/Led Zeppelin - Stairway to Heaven.mp3
 
-# Example with relative paths (relative to this file's location):
-# music/song1.mp3
-# music/Artist - Title.mp3
+# Pop Hits
+# ~/Music/Michael Jackson - Billie Jean.mp3
+# ~/Music/Madonna - Like a Prayer.mp3
 
-# The script will:
-# 1. Read artist/title from file metadata if available
-# 2. Or parse "Artist - Title" from filename
-# 3. Or use "Various Artists" as artist
-# 4. Fetch synchronized lyrics automatically
-# 5. Group all songs under the specified album name
+# Modern Rock
+# music/foo_fighters/The Pretender.mp3
+# music/foo_fighters/Everlong.mp3
+
+# Add your files below:

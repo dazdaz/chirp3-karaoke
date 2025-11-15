@@ -139,5 +139,5 @@ leaderboard.json
 *.flac
 *.m4a
 *.aac
-static/songs/*
-!static/songs/.gitkeep
+songs/*
+!songs/.gitkeep
