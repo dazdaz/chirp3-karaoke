@@ -1,0 +1,19 @@
+# Example Mixtape File
+# One audio file path per line
+# Lines starting with # are comments
+# Paths can be absolute or relative to this file
+
+# Example with absolute paths:
+# /home/user/Music/Queen - Bohemian Rhapsody.mp3
+# /home/user/Music/Led Zeppelin - Stairway to Heaven.mp3
+
+# Example with relative paths (relative to this file's location):
+# music/song1.mp3
+# music/Artist - Title.mp3
+
+# The script will:
+# 1. Read artist/title from file metadata if available
+# 2. Or parse "Artist - Title" from filename
+# 3. Or use "Various Artists" as artist
+# 4. Fetch synchronized lyrics automatically
+# 5. Group all songs under the specified album name

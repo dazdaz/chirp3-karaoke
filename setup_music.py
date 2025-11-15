@@ -372,6 +372,107 @@ def copy_file_to_songs(source_path, dest_filename):
             print(f" ❌ Failed: {e}")
             return False
 
+def process_mixtape(mixtape_file, album_name):
+    """Process mixtape from a text file listing audio files"""
+    print(f"\n🎼 Processing mixtape from: {mixtape_file}")
+    print(f"   💿 Album: {album_name}")
+    
+    if not os.path.exists(mixtape_file):
+        print(f"   ❌ Mixtape file not found: {mixtape_file}")
+        return {}
+    
+    # Read file paths from mixtape file
+    audio_files = []
+    with open(mixtape_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            line = line.strip()
+            # Skip empty lines and comments
+            if not line or line.startswith('#'):
+                continue
+            # Expand ~ and resolve relative paths
+            file_path = os.path.expanduser(line)
+            if not os.path.isabs(file_path):
+                # Resolve relative to mixtape file location
+                base_dir = os.path.dirname(os.path.abspath(mixtape_file))
+                file_path = os.path.join(base_dir, file_path)
+            
+            if os.path.exists(file_path):
+                audio_files.append(file_path)
+            else:
+                print(f"   ⚠️  File not found (skipping): {line}")
+    
+    if not audio_files:
+        print(f"   ⚠️  No valid audio files found in mixtape")
+        return {}
+    
+    print(f"   📀 Found {len(audio_files)} audio files in mixtape")
+    
+    json_entries = {}
+    
+    for audio_path in audio_files:
+        filename = os.path.basename(audio_path)
+        print(f"\n   🎵 Processing: {filename}")
+        
+        # Get metadata from file
+        duration = get_audio_duration(audio_path)
+        meta_artist, meta_title = get_audio_metadata(audio_path)
+        
+        # Use metadata or fallback to filename
+        if meta_title:
+            title = meta_title
+        else:
+            # Use filename without extension as title
+            title = os.path.splitext(filename)[0]
+            title = title.replace('_', ' ').replace('-', ' ')
+        
+        # For mixtapes, always use file metadata for artist
+        if meta_artist:
+            artist = meta_artist
+        else:
+            # Try to extract artist from filename (format: "Artist - Title")
+            if ' - ' in title:
+                parts = title.split(' - ', 1)
+                artist = parts[0].strip()
+                title = parts[1].strip()
+            else:
+                artist = "Various Artists"
+        
+        # Clean title
+        clean_name = clean_title(title, artist_arg=artist)
+        print(f"      📝 Title: {clean_name}")
+        print(f"      🎤 Artist: {artist}")
+        print(f"      ⏱️  Duration: {duration:.1f}s")
+        
+        # Generate file ID (include artist to avoid conflicts in mixtapes)
+        file_id = clean_filename(f"{artist}_{clean_name}")
+        dest_filename = f"{file_id}.mp3"
+        
+        copied_path = copy_file_to_songs(audio_path, dest_filename)
+        if copied_path:
+            # Update filename to actual extension used
+            if copied_path != True:
+                dest_filename = os.path.basename(copied_path)
+            
+            # Try to fetch synced lyrics
+            lrc = fetch_synced_lyrics(artist, clean_name, duration)
+            if lrc:
+                clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(lrc)
+            else:
+                print("      ⚠️  Generic timing.")
+                clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(GENERIC_LYRICS, duration)
+            
+            json_entries[file_id] = {
+                "title": f"{artist} - {clean_name}",
+                "artist": artist,
+                "filename": dest_filename,
+                "lyrics": clean_lyrics,
+                "lyrics_map": lyrics_map,
+                "start_offset": intro_offset,
+                "album": album_name
+            }
+    
+    return json_entries
+
 def process_local_files(directory, artist_name, album_name=None):
     """Process local audio files from a directory"""
     print(f"\n🎵 Processing local files from: {directory}")
@@ -464,11 +565,19 @@ Examples:
   # Download from Bandcamp
   %(prog)s --bandcamp <url> --artist "Artist Name" --album "Album Name"
   
-  # Process local files
+  # Process local files from directory
   %(prog)s --files /path/to/music --artist "Artist Name" --album "Album Name"
+  
+  # Process mixtape (files from different artists)
+  %(prog)s --mixtape mixtape.txt --album "My Mixtape 2024"
   
   # Legacy mode (deprecated)
   %(prog)s <bandcamp_url> "Artist Name"
+
+Mixtape file format:
+  One audio file path per line. Lines starting with # are comments.
+  Paths can be absolute or relative to the mixtape file location.
+  Artist info is read from file metadata or "Artist - Title" filename format.
         """
     )
     
@@ -476,10 +585,12 @@ Examples:
                        help='Bandcamp URL to download mp3 files from')
     parser.add_argument('--files', metavar='DIR',
                        help='Directory containing local mp3/ogg/flac files')
+    parser.add_argument('--mixtape', metavar='FILE',
+                       help='Text file listing audio files for mixtape album (one per line)')
     parser.add_argument('--artist', metavar='NAME',
                        help='Artist name for the album')
     parser.add_argument('--album', metavar='NAME',
-                       help='Album name (optional)')
+                       help='Album name (optional, required for --mixtape)')
     
     # Support legacy positional arguments for backward compatibility
     parser.add_argument('legacy_args', nargs='*',
@@ -523,8 +634,17 @@ Examples:
         print("🎄 Default song already in database")
 
     # --- 2. PROCESS NEW ARGUMENT STYLE ---
-    if args.bandcamp or args.files:
-        if args.bandcamp:
+    if args.bandcamp or args.files or args.mixtape:
+        if args.mixtape:
+            # Process mixtape file
+            if not args.album:
+                print("❌ Error: --album is required when using --mixtape")
+                sys.exit(1)
+            
+            entries = process_mixtape(args.mixtape, args.album)
+            json_db.update(entries)
+        
+        elif args.bandcamp:
             # Download from Bandcamp
             if not args.artist:
                 print("❌ Error: --artist is required when using --bandcamp")
