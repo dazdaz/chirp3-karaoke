@@ -264,13 +264,52 @@ class KaraokeMaker:
             sys.exit(1)
 
 def main():
-    parser = argparse.ArgumentParser(description="Create karaoke tracks using audio-separator")
-    parser.add_argument("-i", "--input", required=True, help="Input file or directory")
-    parser.add_argument("-o", "--output", required=True, help="Output directory")
+    parser = argparse.ArgumentParser(
+        description="Create high-quality karaoke tracks using AI-powered vocal separation with audio-separator. "
+                    "Process individual files or entire directories with adjustable vocal reduction levels.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s -i song.flac -o output/ -t instrumental
+  %(prog)s -i album/ -o karaoke/ -t instrumental -r 0.8
+  %(prog)s -i "Thriller [96kHz · 24bit]/" -o output/ -t reduced-vocals -r 0.5
+
+Processing Types:
+  instrumental     - Creates pure instrumental tracks with all vocals removed.
+                     Ideal for karaoke, backing tracks, or instrumental practice.
+                     Output: filename_instrumental.flac
+  
+  reduced-vocals   - Extracts vocals and creates both vocal and instrumental tracks.
+                     Useful for remixing, vocal practice, or creating tracks with 
+                     adjustable vocal levels. Output includes both vocal and 
+                     instrumental files for mixing.
+                     Output: filename_vocals.flac, filename_instrumental.flac
+        """)
+    
+    parser.add_argument("-i", "--input", required=True,
+                       help="Input file or directory containing audio files. "
+                            "Supports FLAC, MP3, and WAV formats. "
+                            "Can be a single file or entire directory for batch processing.")
+    
+    parser.add_argument("-o", "--output", required=True,
+                       help="Output directory where processed files will be saved. "
+                            "Directory will be created if it doesn't exist.")
+    
     parser.add_argument("-t", "--type", choices=["instrumental", "reduced-vocals"], 
-                       default="instrumental", help="Type of processing")
+                       default="instrumental",
+                       help="Processing type (default: instrumental):\n"
+                            "  instrumental     - Remove all vocals to create pure karaoke tracks\n"
+                            "  reduced-vocals   - Extract vocals separately for remixing or practice")
+    
     parser.add_argument("-r", "--reduction", type=float, default=1.0,
-                       help="Vocal reduction level (0.0=no reduction, 1.0=full removal, default=1.0)")
+                       help="Vocal reduction level (0.0-1.0, default: 1.0):\n"
+                            "  0.0 = No reduction (original audio)\n"
+                            "  0.3 = Light reduction (practice vocals)\n"
+                            "  0.5 = Moderate reduction (background vocals)\n"
+                            "  0.7 = Heavy reduction (karaoke with guide vocals)\n"
+                            "  1.0 = Full removal (pure instrumental)\n"
+                            "Note: audio-separator performs full separation. "
+                            "For partial reduction, consider post-processing the outputs.")
     
     args = parser.parse_args()
     
