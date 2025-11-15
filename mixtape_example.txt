@@ -32,6 +32,8 @@
 #
 # PATH FORMATS:
 # -------------
+# The format is: folder_path/Artist - Title.mp3
+#
 # Absolute paths (start with /)
 #   /home/user/Music/Queen - Bohemian Rhapsody.mp3
 #   /Users/john/Downloads/Beatles - Hey Jude.mp3
@@ -41,9 +43,9 @@
 #   ~/Downloads/ACDC - Highway to Hell.mp3
 #
 # Relative paths (relative to this mixtape file's location)
-#   music/song1.mp3
+#   music/Queen - We Will Rock You.mp3
 #   ../shared/Beatles - Let It Be.mp3
-#   collection/rock/Queen - We Will Rock You.mp3
+#   collection/rock/Led Zeppelin - Stairway to Heaven.mp3
 #
 # USAGE EXAMPLE:
 # --------------
@@ -67,17 +69,24 @@
 # ===================================================================
 # YOUR MIXTAPE STARTS BELOW - Add your song paths here!
 # ===================================================================
+#
+# STRUCTURE: folder/Artist - Title.mp3
+#            [path] [band/artist] [song title]
+#
+# The album name is specified when you run:
+#   python3 setup_music.py --mixtape this_file.txt --album "Album Name"
 
-# Rock Classics
-# /path/to/Queen - Bohemian Rhapsody.mp3
-# /path/to/Led Zeppelin - Stairway to Heaven.mp3
+# Rock Classics Section
+# /home/user/Music/Rock/Queen - Bohemian Rhapsody.mp3
+# /home/user/Music/Rock/Led Zeppelin - Stairway to Heaven.mp3
 
-# Pop Hits
-# ~/Music/Michael Jackson - Billie Jean.mp3
-# ~/Music/Madonna - Like a Prayer.mp3
+# Pop Hits Section  
+# ~/Music/Pop/Michael Jackson - Billie Jean.mp3
+# ~/Music/Pop/Madonna - Like a Prayer.mp3
 
-# Modern Rock
-# music/foo_fighters/The Pretender.mp3
-# music/foo_fighters/Everlong.mp3
+# Your Collection (relative paths)
+# music/Queen - We Will Rock You.mp3
+# music/Beatles - Hey Jude.mp3
+# music/ACDC - Highway to Hell.mp3
 
 # Add your files below:
