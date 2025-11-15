@@ -32,20 +32,43 @@
 #
 # PATH FORMATS:
 # -------------
-# The format is: folder_path/Artist - Title.mp3
+# Each line contains the FULL PATH to an audio file.
+# The path includes the folder location AND the filename (Artist - Title.mp3).
 #
-# Absolute paths (start with /)
+# General format: /folder/path/to/Artist - Title.mp3
+#                 └─────────┬────────┘ └────┬───┴──────┘
+#                      Directory         Filename
+#
+# ABSOLUTE PATHS (start with / or drive letter):
 #   /home/user/Music/Queen - Bohemian Rhapsody.mp3
+#   └──────┬─────────┘ └────────────┬─────────────┘
+#     Folder path              Artist - Title.mp3
+#
 #   /Users/john/Downloads/Beatles - Hey Jude.mp3
+#   C:\Music\ACDC - Highway to Hell.mp3  (Windows)
 #
-# Home directory paths (use ~)
+# HOME DIRECTORY PATHS (use ~ shortcut):
 #   ~/Music/Led Zeppelin - Stairway to Heaven.mp3
-#   ~/Downloads/ACDC - Highway to Hell.mp3
+#   └┬┘└─┬─┘ └──────────────┬──────────────────┘
+#    │  │          Artist - Title.mp3
+#    │  Subfolder
+#    Home directory
 #
-# Relative paths (relative to this mixtape file's location)
+#   ~/Downloads/Metallica - Enter Sandman.mp3
+#
+# RELATIVE PATHS (relative to where THIS mixtape file is located):
+#   If this file is at: /home/user/playlists/mixtape.txt
+#   And your music is at: /home/user/playlists/music/
+#
 #   music/Queen - We Will Rock You.mp3
+#   └─┬─┘ └──────────┬────────────────┘
+#     │        Artist - Title.mp3
+#     Subfolder next to this file
+#
 #   ../shared/Beatles - Let It Be.mp3
-#   collection/rock/Led Zeppelin - Stairway to Heaven.mp3
+#   └──┬──┘ └────────┬──────────────┘
+#      │       Artist - Title.mp3
+#      One folder up, then into 'shared'
 #
 # USAGE EXAMPLE:
 # --------------
