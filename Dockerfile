@@ -40,7 +40,7 @@ ENV PYTHONPATH=/home/chirpuser/.local/lib/python3.11/site-packages:$PYTHONPATH
 USER chirpuser
 
 # Create necessary directories and set permissions
-RUN mkdir -p /app/static/songs && \
+RUN mkdir -p /app/songs && \
     touch /app/leaderboard.json && \
     touch /app/songs.json
 
