@@ -49,31 +49,31 @@ python3 setup_music.py --files ~/Music/BackingTracks --artist "Various" --album 
 
 ### Option 3: Import Mixtape Collection
 
-Import a collection of songs from different artists using a text file:
+Import a collection of songs from different artists using a CSV file:
 
 ```bash
-python3 setup_music.py --mixtape mixtape.txt --album "My Mixtape 2024"
+python3 setup_music.py --mixtape mixtape.txt
 ```
 
-**Mixtape file format** (one file path per line):
+**Mixtape CSV format** (filename, songname, album, singer):
 ```
-# Structure: folder/Artist - Title.mp3
 # Comments start with #
 
 # Rock Classics
-/home/user/Music/Rock/Queen - Bohemian Rhapsody.mp3
-~/Music/Rock/Led Zeppelin - Stairway to Heaven.mp3
+/home/user/Music/bohemian.mp3, Bohemian Rhapsody, Greatest Hits, Queen
+~/Music/stairway.mp3, Stairway to Heaven, Rock Classics, Led Zeppelin
 
 # Your Collection
-music/Beatles - Hey Jude.mp3
+music/hey_jude.mp3, Hey Jude, Party Mix, The Beatles
 ```
 
 **Format explanation:**
-- **Structure**: `folder_path/Artist - Title.mp3`
-- **Album name**: Specified via command line `--album "Album Name"`
-- **Artist detection**: Read from file metadata (ID3 tags) or parsed from "Artist - Title" filename
-- **Path types**: Absolute (`/full/path`), home directory (`~/path`), or relative to mixtape file
-- **Fallback**: Uses "Various Artists" if no artist info found
+- **Line format**: `filename, songname, album, singer`
+- **filename**: Full path to audio file (absolute, ~/, or relative)
+- **songname**: The title of the song
+- **album**: Album name (each song can have different album)
+- **singer**: Artist/band name
+- **Comments**: Lines starting with # are ignored
 
 See `mixtape_example.txt` for detailed documentation and more examples.
 
@@ -91,9 +91,9 @@ python3 setup_music.py <bandcamp_url> "Artist Name"
 |--------|-------------|
 | `--bandcamp URL` | Bandcamp album URL to download |
 | `--files DIR` | Directory containing local audio files |
-| `--mixtape FILE` | Text file listing audio files for mixtape |
+| `--mixtape FILE` | CSV file with format: filename, songname, album, singer |
 | `--artist NAME` | Artist name (required for --bandcamp) |
-| `--album NAME` | Album name (optional, required for --mixtape) |
+| `--album NAME` | Album name (optional for --bandcamp/--files) |
 | `-h, --help` | Show help message with examples |
 
 ## How It Works
@@ -112,11 +112,11 @@ python3 setup_music.py <bandcamp_url> "Artist Name"
 5. Updates songs.json with track information
 
 ### Mixtape Mode
-1. Reads file paths from text file
-2. Extracts artist/title from metadata or filename
+1. Reads CSV entries from text file (filename, songname, album, singer)
+2. Uses explicitly provided song title, album, and artist from CSV
 3. Generates unique file IDs (includes artist name)
 4. Copies files and fetches lyrics
-5. Groups all tracks under specified album
+5. Groups tracks under album names specified in CSV (each song can have different album)
 
 ## Automatic Lyrics Synchronization
 
@@ -174,15 +174,17 @@ Each track in `songs.json` contains:
 - Use descriptive filenames like "Artist - Title.mp3"
 - Add ID3 tags to your files for best results
 
-### Mixtape Files
+### Mixtape Files (CSV Format)
+- Use CSV format: `filename, songname, album, singer`
+- Specify complete information for each song
 - Use relative paths for portability
 - Add comments to organize sections
-- Group similar songs together
+- Each song can have a different album name
 
 ### Album Naming
-- Use album names for organization (optional for most modes)
-- Required for mixtapes to group diverse artists
-- Helps filter songs in the karaoke interface
+- Use album names for organization (optional for --bandcamp/--files)
+- Mixtape albums are specified per-song in the CSV file
+- Helps filter and organize songs in the karaoke interface
 
 ## Troubleshooting
 
@@ -217,8 +219,12 @@ python3 ./setup_music.py --files ~/Downloads/KaraokeTracks --artist "Various" --
 
 ### Create a mixtape
 ```bash
-# Create mixtape.txt with your song paths
-python3 ./setup_music.py --mixtape my_favorites.txt --album "Best of 2024"
+# Create mixtape.txt with CSV format (filename, songname, album, singer)
+# Example content:
+# ~/Music/song1.mp3, Bohemian Rhapsody, Greatest Hits, Queen
+# ~/Music/song2.mp3, Stairway to Heaven, Rock Classics, Led Zeppelin
+
+python3 ./setup_music.py --mixtape my_favorites.txt
 ```
 
 ## Notes
