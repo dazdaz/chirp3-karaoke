@@ -8,6 +8,12 @@ import urllib.parse
 import html as html_entity
 from bs4 import BeautifulSoup
 import time
+import argparse
+import glob
+from mutagen.mp3 import MP3
+from mutagen.oggvorbis import OggVorbis
+from mutagen.flac import FLAC
+from mutagen import File as MutagenFile
 
 # --- CONFIGURATION ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +55,7 @@ GENERIC_LYRICS = """[00:10.00] (Instrumental Intro)
 
 def clean_filename(title):
     s = title.lower().replace(' ', '_')
-    return re.sub(r'[^a-z0-9_]', '', s) + ".mp3"
+    return re.sub(r'[^a-z0-9_]', '', s)
 
 def clean_title(title, artist_arg=""):
     t = title.lower()
@@ -234,7 +240,9 @@ def scrape_bandcamp(url):
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'}
     try:
         resp = requests.get(url, headers=headers, timeout=15)
-        if resp.status_code != 200: return []
+        if resp.status_code != 200: 
+            print(f"   ❌ HTTP {resp.status_code}")
+            return []
         html = resp.text
         soup = BeautifulSoup(html, 'html.parser')
         track_list = []
@@ -242,22 +250,34 @@ def scrape_bandcamp(url):
         for tag in tags:
             try:
                 d = json.loads(html_entity.unescape(tag['data-tralbum']))
-                if 'trackinfo' in d: track_list = d['trackinfo']; break
-            except: pass
+                if 'trackinfo' in d: 
+                    track_list = d['trackinfo']
+                    break
+            except Exception as e:
+                print(f"   ⚠️  JSON parse error: {e}")
+        
         if not track_list:
+            print(f"   ⚠️  No trackinfo found, trying regex fallback...")
             matches = re.finditer(r'title"?\s*:\s*"(.*?)".*?"?mp3-128"?\s*:\s*"(.*?)"', html, re.DOTALL)
             for m in matches:
                 track_list.append({'title': m.group(1), 'file': {'mp3-128': m.group(2)}, 'duration': 180})
+        
         processed = []
         for track in track_list:
-            if not track.get('file') or not track['file'].get('mp3-128'): continue
+            if not track.get('file') or not track['file'].get('mp3-128'): 
+                print(f"   ⚠️  Skipping track (no file): {track.get('title', 'Unknown')}")
+                continue
             processed.append({
                 "title": track.get('title', 'Unknown'),
                 "stream_url": track['file']['mp3-128'],
                 "duration": float(track.get('duration', 180.0))
             })
+        
+        print(f"   ✅ Found {len(processed)} tracks")
         return processed
-    except: return []
+    except Exception as e:
+        print(f"   ❌ Error: {e}")
+        return []
 
 def download_file(url, filepath, force=False):
     if os.path.exists(filepath) and not force:
@@ -285,20 +305,213 @@ def download_file(url, filepath, force=False):
         print(f" ❌ Failed: {e}")
         return False
 
+def get_audio_duration(filepath):
+    """Get duration of audio file in seconds using mutagen"""
+    try:
+        audio = MutagenFile(filepath)
+        if audio is not None and hasattr(audio.info, 'length'):
+            return float(audio.info.length)
+    except Exception as e:
+        print(f"      ⚠️  Could not read duration: {e}")
+    return 180.0  # Default fallback
+
+def get_audio_metadata(filepath):
+    """Extract artist and title from audio file metadata"""
+    try:
+        audio = MutagenFile(filepath)
+        if audio is None:
+            return None, None
+            
+        artist = None
+        title = None
+        
+        # Try different tag formats
+        if isinstance(audio, MP3):
+            artist = audio.get('TPE1', [None])[0] if 'TPE1' in audio else None
+            title = audio.get('TIT2', [None])[0] if 'TIT2' in audio else None
+        elif isinstance(audio, (OggVorbis, FLAC)):
+            artist = audio.get('artist', [None])[0] if 'artist' in audio else None
+            title = audio.get('title', [None])[0] if 'title' in audio else None
+        else:
+            # Generic tag reading
+            artist = audio.get('artist', [None])[0] if 'artist' in audio else None
+            title = audio.get('title', [None])[0] if 'title' in audio else None
+            
+        return artist, title
+    except Exception as e:
+        print(f"      ⚠️  Could not read metadata: {e}")
+        return None, None
+
+def copy_file_to_songs(source_path, dest_filename):
+    """Copy audio file to songs directory, converting to mp3 if needed"""
+    dest_path = os.path.join(SONGS_DIR, dest_filename)
+    
+    # If it's already an mp3, just copy it
+    if source_path.lower().endswith('.mp3'):
+        print(f"      📁 Copying file...", end="")
+        try:
+            import shutil
+            shutil.copy2(source_path, dest_path)
+            print(" ✅")
+            return True
+        except Exception as e:
+            print(f" ❌ Failed: {e}")
+            return False
+    else:
+        # For ogg/flac, we need to copy with the original extension
+        # The karaoke app should handle different formats
+        ext = os.path.splitext(source_path)[1]
+        dest_path = dest_path.replace('.mp3', ext)
+        print(f"      📁 Copying {ext} file...", end="")
+        try:
+            import shutil
+            shutil.copy2(source_path, dest_path)
+            print(" ✅")
+            return dest_path
+        except Exception as e:
+            print(f" ❌ Failed: {e}")
+            return False
+
+def process_local_files(directory, artist_name, album_name=None):
+    """Process local audio files from a directory"""
+    print(f"\n🎵 Processing local files from: {directory}")
+    if artist_name:
+        print(f"   🎤 Artist: {artist_name}")
+    if album_name:
+        print(f"   💿 Album: {album_name}")
+    
+    # Find all supported audio files
+    audio_files = []
+    for ext in ['*.mp3', '*.ogg', '*.flac']:
+        audio_files.extend(glob.glob(os.path.join(directory, ext)))
+        audio_files.extend(glob.glob(os.path.join(directory, ext.upper())))
+    
+    if not audio_files:
+        print(f"   ⚠️  No audio files found in {directory}")
+        return {}
+    
+    print(f"   📀 Found {len(audio_files)} audio files")
+    
+    json_entries = {}
+    
+    for audio_path in sorted(audio_files):
+        filename = os.path.basename(audio_path)
+        print(f"\n   🎵 Processing: {filename}")
+        
+        # Get metadata from file
+        duration = get_audio_duration(audio_path)
+        meta_artist, meta_title = get_audio_metadata(audio_path)
+        
+        # Use metadata or fallback to filename
+        if meta_title:
+            title = meta_title
+        else:
+            # Use filename without extension as title
+            title = os.path.splitext(filename)[0]
+            title = title.replace('_', ' ').replace('-', ' ')
+        
+        if meta_artist:
+            artist = meta_artist
+        elif artist_name:
+            artist = artist_name
+        else:
+            artist = "Unknown Artist"
+        
+        # Clean title
+        clean_name = clean_title(title, artist_arg=artist)
+        print(f"      📝 Title: {clean_name}")
+        print(f"      🎤 Artist: {artist}")
+        print(f"      ⏱️  Duration: {duration:.1f}s")
+        
+        # Generate file ID and copy file
+        file_id = clean_filename(clean_name)
+        dest_filename = f"{file_id}.mp3"
+        
+        copied_path = copy_file_to_songs(audio_path, dest_filename)
+        if copied_path:
+            # Update filename to actual extension used
+            if copied_path != True:
+                dest_filename = os.path.basename(copied_path)
+            
+            # Try to fetch synced lyrics
+            lrc = fetch_synced_lyrics(artist, clean_name, duration)
+            if lrc:
+                clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(lrc)
+            else:
+                print("      ⚠️  Generic timing.")
+                clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(GENERIC_LYRICS, duration)
+            
+            json_entries[file_id] = {
+                "title": f"{artist} - {clean_name}",
+                "artist": artist,
+                "filename": dest_filename,
+                "lyrics": clean_lyrics,
+                "lyrics_map": lyrics_map,
+                "start_offset": intro_offset
+            }
+            
+            if album_name:
+                json_entries[file_id]["album"] = album_name
+    
+    return json_entries
+
 def main():
-    args = sys.argv[1:]
+    parser = argparse.ArgumentParser(
+        description='Setup music for karaoke system',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Download from Bandcamp
+  %(prog)s --bandcamp <url> --artist "Artist Name" --album "Album Name"
+  
+  # Process local files
+  %(prog)s --files /path/to/music --artist "Artist Name" --album "Album Name"
+  
+  # Legacy mode (deprecated)
+  %(prog)s <bandcamp_url> "Artist Name"
+        """
+    )
     
-    if not os.path.exists(SONGS_DIR): os.makedirs(SONGS_DIR, exist_ok=True)
+    parser.add_argument('--bandcamp', metavar='URL', 
+                       help='Bandcamp URL to download mp3 files from')
+    parser.add_argument('--files', metavar='DIR',
+                       help='Directory containing local mp3/ogg/flac files')
+    parser.add_argument('--artist', metavar='NAME',
+                       help='Artist name for the album')
+    parser.add_argument('--album', metavar='NAME',
+                       help='Album name (optional)')
     
-    # --- 1. INITIALIZE DEFAULT SONG ---
-    print("🎄 Initializing Default Song...")
-    default_path = os.path.join(SONGS_DIR, DEFAULT_SONG['filename'])
-    download_file(DEFAULT_SONG['url'], default_path) 
+    # Support legacy positional arguments for backward compatibility
+    parser.add_argument('legacy_args', nargs='*',
+                       help=argparse.SUPPRESS)
     
-    clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(DEFAULT_SONG['lyrics'], duration=120.0)
+    args = parser.parse_args()
     
-    json_db = {
-        DEFAULT_SONG['id']: {
+    if not os.path.exists(SONGS_DIR): 
+        os.makedirs(SONGS_DIR, exist_ok=True)
+    
+    # --- 1. LOAD EXISTING DATABASE OR INITIALIZE ---
+    if os.path.exists(JSON_PATH):
+        print("📁 Loading existing songs database...")
+        try:
+            with open(JSON_PATH, 'r', encoding='utf-8') as f:
+                json_db = json.load(f)
+            print(f"   ✅ Loaded {len(json_db)} existing songs")
+        except Exception as e:
+            print(f"   ⚠️  Could not load existing database: {e}")
+            json_db = {}
+    else:
+        json_db = {}
+    
+    # --- 2. ENSURE DEFAULT SONG EXISTS ---
+    if DEFAULT_SONG['id'] not in json_db:
+        print("🎄 Initializing Default Song...")
+        default_path = os.path.join(SONGS_DIR, DEFAULT_SONG['filename'])
+        download_file(DEFAULT_SONG['url'], default_path) 
+        
+        clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(DEFAULT_SONG['lyrics'], duration=120.0)
+        
+        json_db[DEFAULT_SONG['id']] = {
             "title": DEFAULT_SONG['title'],
             "artist": DEFAULT_SONG['artist'],
             "filename": DEFAULT_SONG['filename'],
@@ -306,24 +519,31 @@ def main():
             "lyrics_map": lyrics_map,
             "start_offset": intro_offset
         }
-    }
+    else:
+        print("🎄 Default song already in database")
 
-    # --- 2. PROCESS ARGS ---
-    if len(args) > 0 and len(args) % 2 == 0:
-        for i in range(0, len(args), 2):
-            url = args[i]
-            artist = args[i+1]
-            print(f"\n🚀 Batch: {artist}")
-            songs = scrape_bandcamp(url)
+    # --- 2. PROCESS NEW ARGUMENT STYLE ---
+    if args.bandcamp or args.files:
+        if args.bandcamp:
+            # Download from Bandcamp
+            if not args.artist:
+                print("❌ Error: --artist is required when using --bandcamp")
+                sys.exit(1)
+            
+            print(f"\n🚀 Bandcamp Download: {args.artist}")
+            if args.album:
+                print(f"   💿 Album: {args.album}")
+            
+            songs = scrape_bandcamp(args.bandcamp)
             
             for song in songs:
-                clean_name = clean_title(song['title'], artist_arg=artist)
-                print(f"\n   🎵 {artist} - {clean_name}")
+                clean_name = clean_title(song['title'], artist_arg=args.artist)
+                print(f"\n   🎵 {args.artist} - {clean_name}")
                 file_id = clean_filename(clean_name)
                 local_path = os.path.join(SONGS_DIR, f"{file_id}.mp3")
                 
                 if download_file(song['stream_url'], local_path):
-                    lrc = fetch_synced_lyrics(artist, clean_name, song['duration'])
+                    lrc = fetch_synced_lyrics(args.artist, clean_name, song['duration'])
                     if lrc:
                         clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(lrc)
                     else: 
@@ -331,16 +551,63 @@ def main():
                         clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(GENERIC_LYRICS, song['duration'])
                     
                     json_db[file_id] = {
-                        "title": f"{artist} - {clean_name}", 
-                        "artist": artist,
+                        "title": f"{args.artist} - {clean_name}", 
+                        "artist": args.artist,
                         "filename": f"{file_id}.mp3",
                         "lyrics": clean_lyrics,
                         "lyrics_map": lyrics_map,
                         "start_offset": intro_offset
                     }
+                    
+                    if args.album:
+                        json_db[file_id]["album"] = args.album
+                    
                     time.sleep(0.5)
+        
+        elif args.files:
+            # Process local files
+            if not os.path.exists(args.files):
+                print(f"❌ Error: Directory not found: {args.files}")
+                sys.exit(1)
+            
+            entries = process_local_files(args.files, args.artist, args.album)
+            json_db.update(entries)
+    
+    # --- 3. LEGACY MODE SUPPORT (for backward compatibility) ---
+    elif len(args.legacy_args) > 0:
+        print("\n⚠️  Warning: Using legacy argument format. Consider using --bandcamp option.")
+        if len(args.legacy_args) % 2 == 0:
+            for i in range(0, len(args.legacy_args), 2):
+                url = args.legacy_args[i]
+                artist = args.legacy_args[i+1]
+                print(f"\n🚀 Batch: {artist}")
+                songs = scrape_bandcamp(url)
+                
+                for song in songs:
+                    clean_name = clean_title(song['title'], artist_arg=artist)
+                    print(f"\n   🎵 {artist} - {clean_name}")
+                    file_id = clean_filename(clean_name)
+                    local_path = os.path.join(SONGS_DIR, f"{file_id}.mp3")
+                    
+                    if download_file(song['stream_url'], local_path):
+                        lrc = fetch_synced_lyrics(artist, clean_name, song['duration'])
+                        if lrc:
+                            clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(lrc)
+                        else: 
+                            print("      ⚠️  Generic timing.")
+                            clean_lyrics, lyrics_map, intro_offset = generate_lyrics_map(GENERIC_LYRICS, song['duration'])
+                        
+                        json_db[file_id] = {
+                            "title": f"{artist} - {clean_name}", 
+                            "artist": artist,
+                            "filename": f"{file_id}.mp3",
+                            "lyrics": clean_lyrics,
+                            "lyrics_map": lyrics_map,
+                            "start_offset": intro_offset
+                        }
+                        time.sleep(0.5)
 
-    # --- 3. SAVE ---
+    # --- 4. SAVE ---
     with open(JSON_PATH, 'w', encoding='utf-8') as f:
         json.dump(json_db, f, indent=2)
         
@@ -348,4 +615,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
