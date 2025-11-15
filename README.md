@@ -212,6 +212,14 @@ python3 setup_music.py --bandcamp <album_url> --artist "Artist Name"
 python3 setup_music.py --files /path/to/music --artist "Various"
 ```
 
+#### Supported File Types
+
+Both directories support:
+- **MP3**: Most common format, good compression
+- **FLAC**: Lossless quality, larger file size  
+- **WAV**: Uncompressed, high quality
+- **OGG**: Open-source format
+
 ### Best Practices
 
 #### Organization Tips
@@ -291,6 +299,7 @@ find songs-tobeprocessed/ -mtime +7 -delete
 - `start.sh` - Start the application
 
 ## Environment Variables
+## Environment Variables
 
 ```bash
 # Required
@@ -329,4 +338,3 @@ For questions or feedback, please open an issue on the [GitHub repository](https
 
 - [Music Setup Guide](README_MUSIC_SETUP.md) - Detailed instructions for downloading and managing music files
 - [Karaoke Maker Guide](README_KARAOKE_MAKER.md) - Instructions for creating instrumental tracks with AI
-- [Project Structure](docs/PROJECT_STRUCTURE.md) - Detailed project architecture and folder organization
