@@ -134,7 +134,7 @@
         window.SONG_DATA = {};
         {% for song in songs %}
             window.SONG_DATA["{{ song.id }}"] = {
-                "file": "{{ url_for('static', filename='songs/' + song.filename) }}",
+                "file": "{{ url_for('static', filename='songs-karaoke/' + song.filename) }}",
                 "start": {{ song.start_offset }},
                 "map": {{ song.lyrics_map | tojson | safe }}
             };
