@@ -57,18 +57,25 @@ python3 setup_music.py --mixtape mixtape.txt --album "My Mixtape 2024"
 
 **Mixtape file format** (one file path per line):
 ```
-# My Favorite Songs - Comments start with #
-/absolute/path/to/Queen - Bohemian Rhapsody.mp3
-~/Music/Led Zeppelin - Stairway to Heaven.mp3
-relative/path/to/Beatles - Hey Jude.mp3
+# Structure: folder/Artist - Title.mp3
+# Comments start with #
+
+# Rock Classics
+/home/user/Music/Rock/Queen - Bohemian Rhapsody.mp3
+~/Music/Rock/Led Zeppelin - Stairway to Heaven.mp3
+
+# Your Collection
+music/Beatles - Hey Jude.mp3
 ```
 
-**Notes:**
-- Paths can be absolute or relative to the mixtape file location
-- Artist info is read from file metadata or "Artist - Title" filename format
-- Falls back to "Various Artists" if no artist info found
-- All songs are grouped under the specified album name
-- See `mixtape_example.txt` for more details
+**Format explanation:**
+- **Structure**: `folder_path/Artist - Title.mp3`
+- **Album name**: Specified via command line `--album "Album Name"`
+- **Artist detection**: Read from file metadata (ID3 tags) or parsed from "Artist - Title" filename
+- **Path types**: Absolute (`/full/path`), home directory (`~/path`), or relative to mixtape file
+- **Fallback**: Uses "Various Artists" if no artist info found
+
+See `mixtape_example.txt` for detailed documentation and more examples.
 
 ### Legacy Mode (Deprecated)
 
