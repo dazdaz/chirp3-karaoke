@@ -117,8 +117,6 @@ The application uses an advanced AI-powered scoring engine that:
 karaoke-king/
 ├── main.py              # Flask application server
 ├── setup_music.py       # Download and setup music
-=======
-├── setup_music.py       # Download and setup music
 ├── karaoke_maker.py     # AI-powered vocal separation for karaoke tracks
 ├── pyproject.toml       # Project configuration and dependencies
 ├── requirements.txt     # Legacy requirements file (optional)
