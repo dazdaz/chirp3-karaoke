@@ -2,33 +2,6 @@
 
 Karaoke King - An advanced karaoke application with real-time transcription and scoring using Google Cloud's Chirp 3 speech recognition. Features professional-grade word-by-word lyric synchronization, fuzzy matching for accurate scoring, and a competitive leaderboard system. Built with Python Flask and modern web technologies.
 
-## Disclaimer & Legal Notice
-
-**⚠️ IMPORTANT: Copyright and Fair Use Notice**
-
-This software is provided for **educational and personal use only**. Users are solely responsible for ensuring they have the legal right to use any audio content with this application.
-
-**What you MUST do:**
-- ✅ Purchase music from legitimate sources (Bandcamp, HDTracks, official artist websites, etc.)
-- ✅ Use only music you own or have permission to use
-- ✅ Ensure compliance with local copyright laws
-- ✅ Respect artist rights and intellectual property
-
-**What you MUST NOT do:**
-- ❌ Use copyrighted music without proper licensing
-- ❌ Distribute or share processed audio files
-- ❌ Commercial use without appropriate permissions
-- ❌ Violate any applicable copyright laws
-
-**Recommended Legal Sources:**
-- [Bandcamp](https://bandcamp.com/) - Direct artist support
-- [HDTracks](https://hdtracks.com/) - High-quality downloads
-- [7digital](https://www.7digital.com/) - Legal music platform
-- [Amazon Music](https://music.amazon.com/) - Licensed content
-- Apple Music, Spotify, etc. (check terms for offline use)
-
-The developers assume no responsibility for misuse of this software. By using this application, you agree to comply with all applicable laws and terms of service.
-
 ## Features
 
 - **Real-time Transcription**: Powered by Google Cloud Speech API with Chirp 3 model for accurate voice recognition
@@ -173,3 +146,30 @@ karaoke-king/
 └── .uv/                 # uv project cache (gitignored)
 ...
 ```
+
+## Disclaimer & Legal Notice
+
+**⚠️ IMPORTANT: Copyright and Fair Use Notice**
+
+This software is provided for **educational and personal use only**. Users are solely responsible for ensuring they have the legal right to use any audio content with this application.
+
+**What you MUST do:**
+- ✅ Purchase music from legitimate sources (Bandcamp, HDTracks, official artist websites, etc.)
+- ✅ Use only music you own or have permission to use
+- ✅ Ensure compliance with local copyright laws
+- ✅ Respect artist rights and intellectual property
+
+**What you MUST NOT do:**
+- ❌ Use copyrighted music without proper licensing
+- ❌ Distribute or share processed audio files
+- ❌ Commercial use without appropriate permissions
+- ❌ Violate any applicable copyright laws
+
+**Recommended Legal Sources:**
+- [Bandcamp](https://bandcamp.com/) - Direct artist support
+- [HDTracks](https://hdtracks.com/) - High-quality downloads
+- [7digital](https://www.7digital.com/) - Legal music platform
+- [Amazon Music](https://music.amazon.com/) - Licensed content
+- Apple Music, Spotify, etc. (check terms for offline use)
+
+The developers assume no responsibility for misuse of this software. By using this application, you agree to comply with all applicable laws and terms of service.
