@@ -116,19 +116,15 @@ The application uses an advanced AI-powered scoring engine that:
 ```
 karaoke-king/
 ├── main.py              # Flask application server
-<<<<<<< HEAD
 ├── setup_music.py       # Download and setup music
 =======
-├── setup_music.py       # Download and setup music from Bandcamp
->>>>>>> 1675ceb6763913ab8457856e6d7dd07cd4aa685f
+├── setup_music.py       # Download and setup music
 ├── karaoke_maker.py     # AI-powered vocal separation for karaoke tracks
 ├── pyproject.toml       # Project configuration and dependencies
 ├── requirements.txt     # Legacy requirements file (optional)
 ├── Dockerfile           # Docker configuration
-<<<<<<< HEAD
 ├── artists.sh           # Example quickstart Artist data management script, wrapper to setup_music.py
 ├── static/              # Frontend assets
-=======
 ├── artists.sh           # Artist data management script, wrapper to setup_music.py
 ├── static/              # Frontend assets
 │   ├── audio-processor.js  # Audio manipulation
