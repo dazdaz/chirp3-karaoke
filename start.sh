@@ -22,7 +22,7 @@ cleanup() {
 trap cleanup EXIT SIGINT
 
 # 2. Environment Config
-export GOOGLE_CLOUD_PROJECT=${DEVSHELL_PROJECT_ID}
+export GOOGLE_CLOUD_PROJECT=${PROJECT_ID}
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/chirp-demo-credentials.json"
 VENV_DIR=".venv"
 

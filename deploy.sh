@@ -5,7 +5,7 @@
 set -e
 
 # --- Configuration ---
-export PROJECT_ID=${DEVSHELL_PROJECT_ID}
+export PROJECT_ID=${PROJECT_ID}
 
 if [ -z "$PROJECT_ID" ]; then
   read -p "Enter the GCP Project ID: " PROJECT_ID

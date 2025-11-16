@@ -19,7 +19,7 @@
 # EXAMPLE LINE:
 # /home/user/Music/bohemian.mp3, Bohemian Rhapsody, Greatest Hits, Queen
 # └────────────┬──────────────┘  └───────┬────────┘  └─────┬────┘  └─┬─┘
-#         File path               Song title         Album     Artist
+#          File path                 Song title          Album     Artist
 #
 # HOW IT WORKS:
 # -------------
