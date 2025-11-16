@@ -22,7 +22,7 @@ cleanup() {
 trap cleanup EXIT SIGINT
 
 # 2. Environment Config
-export GOOGLE_CLOUD_PROJECT="daev-playground"
+export GOOGLE_CLOUD_PROJECT=${DEVSHELL_PROJECT_ID}
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/chirp-demo-credentials.json"
 VENV_DIR=".venv"
 
@@ -59,8 +59,33 @@ fi
 echo "📚 Syncing dependencies..."
 uv pip install -r requirements.txt > /dev/null 2>&1
 
-# 5. Check Port & Run
-PORT=${1:-8080}
+# 5. Parse command line arguments
+PORT="8080"  # Default port
+
+# Parse --port option
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --port)
+            PORT="$2"
+            shift 2
+            ;;
+        --help)
+            echo "Usage: $0 [--port PORT] [stop]"
+            echo "  --port PORT    Port to run the server on (default: 8080)"
+            echo "  stop           Stop the running server"
+            exit 0
+            ;;
+        *)
+            # For backwards compatibility, treat first non-option argument as port
+            if [[ "$1" =~ ^[0-9]+$ ]]; then
+                PORT="$1"
+            fi
+            shift
+            ;;
+    esac
+done
+
+# 6. Check Port & Run
 if lsof -Pi :$PORT -sTCP:LISTEN -t >/dev/null 2>&1; then
     echo "⚠️  Port $PORT in use. Killing old process..."
     pkill -f "python.*main.py" 2>/dev/null
@@ -69,4 +94,3 @@ fi
 
 echo "🎵 Starting server on port $PORT..."
 "$VENV_DIR/bin/python" main.py $PORT
-

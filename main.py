@@ -3,6 +3,7 @@ import logging
 import json
 import difflib
 import re
+import sys
 import jellyfish  # Requires: uv pip install jellyfish
 from flask import Flask, render_template, request, jsonify
 from google.cloud.speech_v2 import SpeechClient
@@ -21,6 +22,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 SONGS_DB_PATH = os.path.join(BASE_DIR, 'songs.json')
 LEADERBOARD_PATH = os.path.join(BASE_DIR, 'leaderboard.json')
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT")
+
+# --- PORT CONFIGURATION ---
+def get_port():
+    """Get port from command line argument or environment variable"""
+    # Check command line arguments first
+    if len(sys.argv) > 1:
+        try:
+            return int(sys.argv[1])
+        except (ValueError, IndexError):
+            pass
+    
+    # Fall back to environment variable
+    return int(os.environ.get('PORT', 8080))
 
 # --- DATA HELPERS ---
 def load_json(path, default=None):
@@ -235,7 +249,7 @@ def calculate_score_advanced(user_text, official_text):
     return min(100, final_score), " ".join(html_output)
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
+    port = get_port()
     print(f"🎵 Server running on port {port}")
     app.run(debug=True, host='0.0.0.0', port=port)
 
