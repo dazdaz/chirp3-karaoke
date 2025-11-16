@@ -1,0 +1,10 @@
+flask==3.0.0
+google-cloud-speech==2.26.0
+requests
+beautifulsoup4
+jellyfish
+mutagen
+audio-separator>=0.39.0
+torch>=2.3.0
+torchaudio>=2.3.0
+onnxruntime>=1.23.0

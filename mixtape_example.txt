@@ -1,0 +1,88 @@
+# ===================================================================
+# MIXTAPE FILE FORMAT - How to Create Your Custom Karaoke Collection
+# ===================================================================
+#
+# This file allows you to import songs from different artists as one album!
+# Perfect for creating custom playlists or party collections.
+#
+# FORMAT:
+# -------
+# Each line contains comma-separated values in this order:
+#
+#   filename, songname, album, singer
+#
+# - filename: Full path to the audio file (mp3, ogg, or flac)
+# - songname: The title of the song
+# - album: The album name (all songs will be grouped under this)
+# - singer: The artist/band name
+#
+# EXAMPLE LINE:
+# /home/user/Music/bohemian.mp3, Bohemian Rhapsody, Greatest Hits, Queen
+# └────────────┬──────────────┘  └───────┬────────┘  └─────┬────┘  └─┬─┘
+#         File path               Song title         Album     Artist
+#
+# HOW IT WORKS:
+# -------------
+# 1. One song per line in CSV format
+# 2. Lines starting with # are comments (ignored)
+# 3. Empty lines are ignored
+# 4. The script copies files to songs/ directory
+# 5. Fetches synchronized lyrics automatically
+# 6. Groups all songs under the album name you specify
+#
+# PATH FORMATS:
+# -------------
+# The filename (first field) can be:
+#
+# ABSOLUTE PATHS:
+#   /home/user/Music/song.mp3, Title, Album, Artist
+#   /Users/john/Downloads/track.mp3, Title, Album, Artist
+#   C:\Music\song.mp3, Title, Album, Artist (Windows)
+#
+# HOME DIRECTORY:
+#   ~/Music/song.mp3, Title, Album, Artist
+#   ~/Downloads/track.flac, Title, Album, Artist
+#
+# RELATIVE PATHS (relative to this mixtape file):
+#   music/song.mp3, Title, Album, Artist
+#   ../shared/track.ogg, Title, Album, Artist
+#
+# USAGE EXAMPLE:
+# --------------
+# python3 setup_music.py --mixtape my_favorites.txt
+#
+# This will:
+# - Read all entries from my_favorites.txt
+# - Copy files to the songs/ directory
+# - Use the songname, album, and singer from each line
+# - Fetch synchronized lyrics automatically
+# - Create entries in songs.json database
+#
+# TIPS FOR BEST RESULTS:
+# ----------------------
+# ✅ Use full paths or relative paths consistently
+# ✅ Keep album name consistent for all songs you want grouped
+# ✅ Use proper artist names for better lyrics matching
+# ✅ Avoid commas in song titles/album names (or quote them)
+# ✅ Supports mp3, ogg, and flac file formats
+#
+# ===================================================================
+# YOUR MIXTAPE STARTS BELOW - Add your songs here!
+# ===================================================================
+#
+# FORMAT: filename, songname, album, singer
+
+# Rock Classics
+# /home/user/Music/Rock/bohemian.mp3, Bohemian Rhapsody, Rock Classics, Queen
+# /home/user/Music/Rock/stairway.mp3, Stairway to Heaven, Rock Classics, Led Zeppelin
+
+# Pop Hits
+# ~/Music/Pop/billie_jean.mp3, Billie Jean, Pop Collection, Michael Jackson
+# ~/Music/Pop/like_a_prayer.mp3, Like a Prayer, Pop Collection, Madonna
+
+# Your Collection (relative paths)
+# music/we_will_rock_you.mp3, We Will Rock You, Party Mix, Queen
+# music/hey_jude.mp3, Hey Jude, Party Mix, The Beatles
+# music/highway_to_hell.mp3, Highway to Hell, Party Mix, AC/DC
+
+# Add your songs below (format: filename, songname, album, singer):

@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chirp Karaoke Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; }
+        .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; }
+        .lyric-line { transition: all 0.5s ease; opacity: 0.3; transform: scale(0.95); margin-bottom: 1.5rem; cursor: pointer; }
+        .line-active { opacity: 1; transform: scale(1.0); }
+        .lyric-word { display: inline-block; margin-right: 0.4em; transition: color 0.1s, transform 0.1s; }
+        .word-future { color: #9ca3af; } 
+        .word-current { color: #facc15; transform: scale(1.3); text-shadow: 0 0 15px rgba(250, 204, 21, 0.8); }
+        .word-past { color: #ffffff; text-shadow: none; }
+        .toggle-checkbox:checked { right: 0; border-color: #68D391; }
+        .toggle-checkbox:checked + .toggle-label { background-color: #68D391; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+        ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        @keyframes ping { 0% { transform: scale(1); opacity: 1; } 75%, 100% { transform: scale(2); opacity: 0; } }
+        .animate-ping-slow { animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite; }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-slate-900 to-black">
+
+    <div class="glass w-full max-w-6xl p-6 shadow-2xl grid grid-cols-1 lg:grid-cols-12 gap-6 h-[85vh]">
+        
+        <!-- LEFT: Controls -->
+        <div class="lg:col-span-4 flex flex-col gap-4 border-r border-white/10 pr-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+                    KARAOKE PRO
+                </h1>
+                <button onclick="openLeaderboard()" class="text-xl hover:scale-110 transition" title="View Leaderboard">🏆</button>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-gray-500 uppercase">Select Track</label>
+                <select id="songSelect" class="w-full mt-2 bg-slate-800 border border-slate-600 rounded-xl p-3 text-white outline-none focus:border-blue-500 transition">
+                    <option value="" disabled selected>Choose a song...</option>
+                    {% for song in songs %}
+                        <option value="{{ song.id }}">{{ song.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="flex items-center justify-between bg-slate-800/50 p-3 rounded-xl border border-white/5">
+                <span class="text-sm font-bold text-gray-300">⏩ Skip Intro</span>
+                <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                    <input type="checkbox" name="skipIntro" id="skipIntro" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked/>
+                    <label for="skipIntro" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-gray-500 uppercase">Recording Duration</label>
+                <select id="durationSelect" class="w-full mt-1 bg-slate-800 border border-slate-600 rounded-xl p-2 text-white text-sm outline-none focus:border-blue-500">
+                    <option value="10">Quick Test (10s)</option>
+                    <option value="20" selected>Short (20s)</option>
+                    <option value="30">Medium (30s)</option>
+                    <option value="40">Long (40s)</option>
+                    <option value="50">Extended (50s)</option>
+                    <option value="60">Minute (60s)</option>
+                    <option value="full">Full Song</option>
+                </select>
+            </div>
+
+            <div class="bg-slate-800/50 p-3 rounded-xl border border-white/5">
+                <label class="text-xs font-bold text-gray-500 uppercase block mb-2">Sync Adjustment</label>
+                <div class="flex items-center justify-between gap-2">
+                    <button onclick="adjustSync(-0.5)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-sm font-bold text-white">&lt;&lt;</button>
+                    <span id="syncDisplay" class="text-blue-400 font-mono text-sm">0.0s</span>
+                    <button onclick="adjustSync(0.5)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-sm font-bold text-white">&gt;&gt;</button>
+                </div>
+            </div>
+            
+            <audio id="audioPlayer" class="w-full mt-2 hidden" controls></audio>
+            
+            <div class="relative w-full h-32 mt-auto bg-slate-900/50 rounded-xl overflow-hidden border border-white/5">
+                <canvas id="vizCanvas" class="w-full h-full"></canvas>
+            </div>
+
+            <div class="mt-4">
+                <div class="flex gap-3 mb-4">
+                    <button id="recordBtn" disabled class="flex-1 py-4 rounded-xl bg-green-600 hover:bg-green-500 disabled:bg-slate-700 disabled:opacity-50 font-bold text-white transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-green-500/20">
+                        🎤 SING
+                    </button>
+                    <button id="stopBtn" disabled class="flex-1 py-4 rounded-xl bg-red-600 hover:bg-red-500 disabled:bg-slate-700 disabled:opacity-50 font-bold text-white transition-all shadow-lg hover:shadow-red-500/20">
+                        ⏹ STOP
+                    </button>
+                </div>
+                <div id="status" class="text-center text-blue-400 text-xs font-bold uppercase tracking-wider">Select a song</div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Teleprompter -->
+        <div class="lg:col-span-8 flex flex-col relative overflow-hidden bg-slate-900/50 rounded-2xl border border-white/5 backdrop-blur-md">
+            <div id="lyricsContainer" class="flex-1 overflow-y-auto p-8 text-center space-y-8 scroll-smooth">
+                <div class="text-gray-500 italic mt-40 text-lg">Select a song to load lyrics...</div>
+            </div>
+            
+            <div id="countdownOverlay" class="absolute inset-0 bg-black/80 hidden items-center justify-center z-50">
+                <div id="countdownText" class="text-9xl font-black text-white animate-ping-slow">3</div>
+            </div>
+
+            <div id="scoreOverlay" class="absolute inset-0 bg-black/90 hidden flex-col items-center justify-center z-20 transition-opacity duration-500">
+                <div class="text-7xl font-black text-yellow-400 mb-4 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" id="scoreValue">0%</div>
+                <div class="text-gray-300 mb-8 text-xl uppercase font-bold tracking-widest">Match Score</div>
+                <div id="newRecordMsg" class="hidden text-green-400 font-bold text-2xl mb-6 animate-bounce">🏆 NEW HIGH SCORE! 🏆</div>
+                <div class="w-64 space-y-3">
+                    <input type="text" id="playerName" placeholder="Enter your name" class="w-full p-3 bg-slate-800 border border-slate-600 rounded-lg text-white text-center outline-none focus:border-blue-500">
+                    <button onclick="saveScoreAndClose()" class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-lg font-bold text-white">Save Score</button>
+                    <button onclick="closeScore()" class="w-full py-2 text-gray-500 hover:text-white text-sm">Skip</button>
+                </div>
+            </div>
+            
+            <div id="leaderboardModal" class="absolute inset-0 bg-slate-900/95 hidden flex-col p-8 z-30">
+                <div class="flex justify-between items-center mb-6 border-b border-white/10 pb-4">
+                    <h2 class="text-2xl font-bold text-white">🏆 Leaderboard</h2>
+                    <button onclick="closeLeaderboard()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+                </div>
+                <div id="leaderboardList" class="flex-1 overflow-y-auto space-y-2">
+                    <div class="text-center text-gray-500 mt-10">Loading...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.SONG_DATA = {};
+        {% for song in songs %}
+            window.SONG_DATA["{{ song.id }}"] = {
+                "file": "{{ url_for('static', filename='songs-karaoke/' + song.filename) }}",
+                "start": {{ song.start_offset }},
+                "map": {{ song.lyrics_map | tojson | safe }}
+            };
+        {% endfor %}
+    </script>
+
+    <script>
+        const songSelect = document.getElementById('songSelect');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const lyricsContainer = document.getElementById('lyricsContainer');
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusDiv = document.getElementById('status');
+        const skipIntroCheckbox = document.getElementById('skipIntro');
+        const durationSelect = document.getElementById('durationSelect');
+        const syncDisplay = document.getElementById('syncDisplay');
+        const vizCanvas = document.getElementById('vizCanvas');
+        const countdownOverlay = document.getElementById('countdownOverlay');
+        const countdownText = document.getElementById('countdownText');
+        
+        let mediaRecorder;
+        let audioChunks = [];
+        let currentLyricsMap = [];
+        let globalOffset = 0.0;
+        let sessionHighScore = 0;
+        let autoStopTimer = null;
+        let visualCountdownInterval = null;
+        let currentScore = 0;
+        
+        // Viz Vars
+        let audioContext, analyser, source, ctx;
+        let isVizInit = false;
+
+        function initVisualizer() {
+            if(isVizInit) return;
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                source = audioContext.createMediaElementSource(audioPlayer);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                analyser.fftSize = 128;
+                ctx = vizCanvas.getContext('2d');
+                isVizInit = true;
+                renderFrame();
+            } catch(e) { console.log("Viz Error:", e); }
+        }
+
+        function renderFrame() {
+            requestAnimationFrame(renderFrame);
+            if(!isVizInit) return;
+            vizCanvas.width = vizCanvas.offsetWidth;
+            vizCanvas.height = vizCanvas.offsetHeight;
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, vizCanvas.width, vizCanvas.height);
+            const barWidth = (vizCanvas.width / bufferLength) * 2.5;
+            let x = 0;
+            for(let i = 0; i < bufferLength; i++) {
+                let barHeight = (dataArray[i] / 255) * vizCanvas.height;
+                const gradient = ctx.createLinearGradient(0, vizCanvas.height, 0, 0);
+                gradient.addColorStop(0, '#3b82f6');
+                gradient.addColorStop(1, '#a855f7');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, vizCanvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 2;
+            }
+        }
+
+        songSelect.addEventListener('change', (e) => {
+            const songId = e.target.value;
+            const data = window.SONG_DATA[songId];
+            if (!data) return;
+            audioPlayer.pause();
+            audioPlayer.currentTime = 0;
+            globalOffset = 0.0;
+            updateSyncDisplay();
+            audioPlayer.crossOrigin = "anonymous"; 
+            audioPlayer.src = data.file + "?t=" + Date.now();
+            currentLyricsMap = data.map;
+            renderLyrics(currentLyricsMap);
+            recordBtn.disabled = false;
+            statusDiv.innerText = "Ready to Sing";
+        });
+
+        function adjustSync(amount) {
+            globalOffset += amount;
+            updateSyncDisplay();
+            audioPlayer.dispatchEvent(new Event('timeupdate'));
+        }
+
+        function updateSyncDisplay() {
+            const sign = globalOffset > 0 ? '+' : '';
+            syncDisplay.innerText = `${sign}${globalOffset.toFixed(1)}s`;
+            syncDisplay.style.color = globalOffset === 0 ? '#60a5fa' : '#facc15';
+        }
+
+        function renderLyrics(map) {
+            lyricsContainer.innerHTML = "";
+            let pad = document.createElement('div'); pad.style.height = "45%"; lyricsContainer.appendChild(pad.cloneNode());
+            map.forEach((line, index) => {
+                const lineDiv = document.createElement('div');
+                lineDiv.className = "lyric-line text-3xl font-bold relative z-10";
+                lineDiv.dataset.start = line.time;
+                line.words.forEach(w => {
+                    const span = document.createElement('span');
+                    span.innerText = w.text;
+                    span.className = "lyric-word word-future";
+                    span.dataset.start = w.start;
+                    span.dataset.end = w.end;
+                    lineDiv.appendChild(span);
+                });
+                lineDiv.onclick = () => {
+                    audioPlayer.currentTime = line.time + globalOffset;
+                    if(audioContext && audioContext.state === 'suspended') audioContext.resume();
+                    audioPlayer.play();
+                };
+                lyricsContainer.appendChild(lineDiv);
+            });
+            lyricsContainer.appendChild(pad);
+        }
+
+        audioPlayer.ontimeupdate = () => {
+            const t = audioPlayer.currentTime - globalOffset;
+            let activeLine = null;
+            const lines = document.querySelectorAll('.lyric-line');
+            lines.forEach(line => {
+                const words = line.querySelectorAll('.lyric-word');
+                if (words.length === 0) return;
+                const lineStart = parseFloat(words[0].dataset.start);
+                const lineEnd = parseFloat(words[words.length-1].dataset.end);
+                if (t >= lineStart - 2 && t <= lineEnd + 2) {
+                    line.classList.add('line-active');
+                    activeLine = line;
+                } else {
+                    line.classList.remove('line-active');
+                }
+                words.forEach(word => {
+                    const wStart = parseFloat(word.dataset.start);
+                    const wEnd = parseFloat(word.dataset.end);
+                    if (t >= wStart && t < wEnd) word.className = "lyric-word word-current";
+                    else if (t >= wEnd) word.className = "lyric-word word-past";
+                    else word.className = "lyric-word word-future";
+                });
+            });
+            if (activeLine) {
+                 const containerRect = lyricsContainer.getBoundingClientRect();
+                 const lineRect = activeLine.getBoundingClientRect();
+                 const offset = lineRect.top - containerRect.top - (containerRect.height / 2) + (lineRect.height / 2);
+                 lyricsContainer.scrollBy({ top: offset, behavior: 'smooth' });
+            }
+        };
+
+        recordBtn.addEventListener('click', async () => {
+            if (!isVizInit) initVisualizer();
+            if (audioContext && audioContext.state === 'suspended') await audioContext.resume();
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+                mediaRecorder.onstop = submitRecording;
+                
+                runCountdown(() => {
+                    startKaraokeSession();
+                });
+            } catch (e) { alert("Microphone Access Denied"); }
+        });
+
+        function runCountdown(callback) {
+            let count = 3;
+            countdownOverlay.classList.remove('hidden');
+            countdownOverlay.classList.add('flex');
+            countdownText.innerText = count;
+            const timer = setInterval(() => {
+                count--;
+                if(count > 0) countdownText.innerText = count;
+                else if (count === 0) countdownText.innerText = "GO!";
+                else {
+                    clearInterval(timer);
+                    countdownOverlay.classList.add('hidden');
+                    countdownOverlay.classList.remove('flex');
+                    callback();
+                }
+            }, 1000);
+        }
+
+        // --- NEW: VISUAL COUNTDOWN LOGIC ---
+        function startVisualCountdown(duration) {
+            clearInterval(visualCountdownInterval);
+            let timeLeft = parseInt(duration); // 10, 20, 60...
+            
+            // Update Status Immediately
+            if(isNaN(timeLeft)) {
+                // Full Song Mode
+                visualCountdownInterval = setInterval(() => {
+                     if (audioPlayer.paused) return;
+                     const remaining = Math.round(audioPlayer.duration - audioPlayer.currentTime);
+                     const mins = Math.floor(remaining / 60);
+                     const secs = remaining % 60;
+                     statusDiv.innerText = `🔴 Recording... (${mins}:${secs.toString().padStart(2, '0')})`;
+                }, 1000);
+            } else {
+                // Fixed Time Mode
+                statusDiv.innerText = `🔴 Recording... (${timeLeft}s)`;
+                visualCountdownInterval = setInterval(() => {
+                    timeLeft--;
+                    if (timeLeft >= 0) {
+                        statusDiv.innerText = `🔴 Recording... (${timeLeft}s)`;
+                    } else {
+                        clearInterval(visualCountdownInterval);
+                    }
+                }, 1000);
+            }
+        }
+
+        function startKaraokeSession() {
+            mediaRecorder.start();
+            
+            const songId = songSelect.value;
+            const data = window.SONG_DATA[songId];
+            const startTime = (data.start || 0) + globalOffset;
+            const shouldSkip = skipIntroCheckbox.checked;
+            const durationLimit = durationSelect.value;
+
+            if (audioPlayer.readyState >= 1) performSeekAndPlay(shouldSkip, startTime);
+            else {
+                audioPlayer.onloadedmetadata = () => {
+                    performSeekAndPlay(shouldSkip, startTime);
+                    audioPlayer.onloadedmetadata = null;
+                };
+            }
+
+            // START VISUAL TIMER
+            startVisualCountdown(durationLimit);
+
+            // Handle Auto-Stop Logic
+            if (durationLimit !== 'full') {
+                clearTimeout(autoStopTimer);
+                const limitMs = parseInt(durationLimit) * 1000;
+                autoStopTimer = setTimeout(() => {
+                    if (mediaRecorder.state === 'recording') {
+                        stopBtn.click();
+                    }
+                }, limitMs);
+            }
+
+            recordBtn.disabled = true;
+            stopBtn.disabled = false;
+            songSelect.disabled = true;
+        }
+
+        function performSeekAndPlay(shouldSkip, startTime) {
+            if (shouldSkip && startTime > 0) {
+                audioPlayer.currentTime = Math.max(0, startTime);
+            } else {
+                audioPlayer.currentTime = 0;
+            }
+            audioPlayer.play().catch(e => console.log("Play error:", e));
+        }
+
+        stopBtn.addEventListener('click', () => {
+            clearTimeout(autoStopTimer);
+            clearInterval(visualCountdownInterval); // Stop the visual timer
+            statusDiv.innerText = "Processing..."; // Immediate feedback
+            
+            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+            audioPlayer.pause();
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+            songSelect.disabled = false;
+        });
+
+        async function submitRecording() {
+            if (audioChunks.length === 0) return;
+            statusDiv.innerText = "⏳ Scoring...";
+            const blob = new Blob(audioChunks, { type: 'audio/webm' });
+            const fd = new FormData();
+            fd.append('audio_data', blob);
+            fd.append('song_id', songSelect.value);
+
+            try {
+                const res = await fetch('/transcribe', { method: 'POST', body: fd });
+                const data = await res.json();
+                currentScore = data.score || 0;
+                const overlay = document.getElementById('scoreOverlay');
+                const scoreVal = document.getElementById('scoreValue');
+                const newRecordMsg = document.getElementById('newRecordMsg');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                scoreVal.innerText = currentScore + "%";
+                
+                if (currentScore > sessionHighScore) {
+                    sessionHighScore = currentScore;
+                    newRecordMsg.classList.remove('hidden');
+                    launchFireworks();
+                } else {
+                    newRecordMsg.classList.add('hidden');
+                }
+                statusDiv.innerText = "Done";
+                setTimeout(() => window.closeScore(), 5000);
+            } catch(e) { statusDiv.innerText = "Network Error"; }
+        }
+
+        async function saveScoreAndClose() {
+            const name = document.getElementById('playerName').value || "Anonymous";
+            const songTitle = songSelect.selectedOptions[0].innerText;
+            await fetch('/leaderboard', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name, score: currentScore, song: songTitle })
+            });
+            closeScore();
+        }
+
+        function closeScore() {
+            const overlay = document.getElementById('scoreOverlay');
+            overlay.classList.add('hidden');
+            overlay.classList.remove('flex');
+        }
+
+        async function openLeaderboard() {
+            const modal = document.getElementById('leaderboardModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            const res = await fetch('/leaderboard');
+            const data = await res.json();
+            const list = document.getElementById('leaderboardList');
+            if (data.length === 0) {
+                list.innerHTML = '<div class="text-center text-gray-500 mt-10">No high scores yet!</div>';
+            } else {
+                list.innerHTML = data.map((entry, i) => `
+                    <div class="flex justify-between items-center p-3 bg-slate-800/50 rounded-lg border border-white/5">
+                        <div class="flex items-center gap-4">
+                            <span class="font-black text-xl ${i===0 ? 'text-yellow-400' : 'text-gray-500'}">#${i+1}</span>
+                            <div>
+                                <div class="font-bold text-white">${entry.name}</div>
+                                <div class="text-xs text-gray-400">${entry.song}</div>
+                            </div>
+                        </div>
+                        <span class="font-black text-2xl text-blue-400">${entry.score}%</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function closeLeaderboard() {
+            const modal = document.getElementById('leaderboardModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function launchFireworks() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 50 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
+
