@@ -126,8 +126,7 @@ karaoke-king/
 ├── artists.sh           # Artist data management script, wrapper to setup_music.py
 ├── static/              # Frontend assets
 │   ├── audio-processor.js  # Audio manipulation
-│   ├── style.css        # Styling
-│   └── songs/           # Audio files
+│   └── style.css        # Styling
 ├── templates/           # HTML templates
 │   └── index.html       # Main game interface
 ├── songs.json           # Song database (gitignored)
