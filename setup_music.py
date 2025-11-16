@@ -1,4 +1,20 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run
+# /// script
+# requires-python = "==3.13"
+# dependencies = [
+#     "flask==3.0.0",
+#     "google-cloud-speech==2.26.0",
+#     "requests",
+#     "beautifulsoup4",
+#     "jellyfish",
+#     "mutagen",
+#     "audio-separator>=0.39.0",
+#     "torch>=2.3.0",
+#     "torchaudio>=2.3.0",
+#     "onnxruntime>=1.23.0",
+# ]
+# ///
+
 import sys
 import os
 import json
@@ -70,7 +86,6 @@ def clean_title(title, artist_arg=""):
         t = t.replace(artist_arg.lower(), "")
         for part in artist_arg.split():
             if len(part) > 3: t = t.replace(part.lower(), "")
-
     return " ".join(t.split()).title()
 
 def fetch_synced_lyrics(artist, song_title, duration):
@@ -83,7 +98,6 @@ def fetch_synced_lyrics(artist, song_title, duration):
         if resp.status_code != 200: return None
         data = resp.json()
         if not data: return None
-
         best_match = None
         best_diff = 9999
         for track in data:
@@ -92,7 +106,6 @@ def fetch_synced_lyrics(artist, song_title, duration):
             if diff < best_diff:
                 best_diff = diff
                 best_match = track
-
         if best_match:
             print(f" ✅ Found!")
             return best_match['syncedLyrics']
@@ -206,7 +219,7 @@ def generate_heuristic_map(text_block, duration):
     lyrics_map = []
     current_time = INTRO_OFFSET
     LINE_GAP = 1.0 
-
+    
     for line in lines:
         words = line.split()
         line_words_data = []
@@ -216,7 +229,7 @@ def generate_heuristic_map(text_block, duration):
         if total_weight == 0: total_weight = 1
         
         time_per_unit = (avg_line_dur - LINE_GAP) / total_weight
-
+        
         for idx, word in enumerate(words):
             w_dur = word_weights[idx] * time_per_unit
             line_words_data.append({
@@ -243,8 +256,10 @@ def scrape_bandcamp(url):
         if resp.status_code != 200: 
             print(f"   ❌ HTTP {resp.status_code}")
             return []
+        
         html = resp.text
         soup = BeautifulSoup(html, 'html.parser')
+        
         track_list = []
         tags = soup.find_all(attrs={"data-tralbum": True})
         for tag in tags:
@@ -267,6 +282,7 @@ def scrape_bandcamp(url):
             if not track.get('file') or not track['file'].get('mp3-128'): 
                 print(f"   ⚠️  Skipping track (no file): {track.get('title', 'Unknown')}")
                 continue
+                
             processed.append({
                 "title": track.get('title', 'Unknown'),
                 "stream_url": track['file']['mp3-128'],
@@ -282,14 +298,14 @@ def scrape_bandcamp(url):
 def download_file(url, filepath, force=False):
     if os.path.exists(filepath) and not force:
         if "merry_christmas" in filepath and os.path.getsize(filepath) > 10000:
-            print(f"   🎁 Default Song ready.")
+            print(f"   🎄 Default Song ready.")
             return True
         if "merry_christmas" not in filepath:
             print(f"      ✅ File exists. Skipping.")
             return True 
     
     if "merry_christmas" in filepath:
-        print(f"   🎁 Downloading Default Song...")
+        print(f"   🎄 Downloading Default Song...")
     else:
         print(f"      ⬇️ Downloading...", end="")
         
@@ -348,7 +364,7 @@ def copy_file_to_songs(source_path, dest_filename):
     
     # If it's already an mp3, just copy it
     if source_path.lower().endswith('.mp3'):
-        print(f"      📁 Copying file...", end="")
+        print(f"      📂 Copying file...", end="")
         try:
             import shutil
             shutil.copy2(source_path, dest_path)
@@ -362,7 +378,7 @@ def copy_file_to_songs(source_path, dest_filename):
         # The karaoke app should handle different formats
         ext = os.path.splitext(source_path)[1]
         dest_path = dest_path.replace('.mp3', ext)
-        print(f"      📁 Copying {ext} file...", end="")
+        print(f"      📂 Copying {ext} file...", end="")
         try:
             import shutil
             shutil.copy2(source_path, dest_path)
@@ -374,7 +390,7 @@ def copy_file_to_songs(source_path, dest_filename):
 
 def process_mixtape(mixtape_file, album_name=None):
     """Process mixtape from a CSV file with format: filename, songname, album, singer"""
-    print(f"\n🎼 Processing mixtape from: {mixtape_file}")
+    print(f"\n🎵 Processing mixtape from: {mixtape_file}")
     
     if not os.path.exists(mixtape_file):
         print(f"   ❌ Mixtape file not found: {mixtape_file}")
@@ -421,7 +437,7 @@ def process_mixtape(mixtape_file, album_name=None):
         print(f"   ⚠️  No valid entries found in mixtape")
         return {}
     
-    print(f"   📀 Found {len(entries)} songs in mixtape")
+    print(f"   📑 Found {len(entries)} songs in mixtape")
     
     json_entries = {}
     
@@ -432,9 +448,9 @@ def process_mixtape(mixtape_file, album_name=None):
         singer = entry['singer']
         
         filename = os.path.basename(audio_path)
-        print(f"\n   🎵 Processing: {filename}")
+        print(f"\n   🎤 Processing: {filename}")
         print(f"      📝 Title: {song_name}")
-        print(f"      🎤 Artist: {singer}")
+        print(f"      🎙 Artist: {singer}")
         print(f"      💿 Album: {album}")
         
         # Get audio duration
@@ -473,9 +489,9 @@ def process_mixtape(mixtape_file, album_name=None):
 
 def process_local_files(directory, artist_name, album_name=None):
     """Process local audio files from a directory"""
-    print(f"\n🎵 Processing local files from: {directory}")
+    print(f"\n🎤 Processing local files from: {directory}")
     if artist_name:
-        print(f"   🎤 Artist: {artist_name}")
+        print(f"   🎙 Artist: {artist_name}")
     if album_name:
         print(f"   💿 Album: {album_name}")
     
@@ -489,13 +505,13 @@ def process_local_files(directory, artist_name, album_name=None):
         print(f"   ⚠️  No audio files found in {directory}")
         return {}
     
-    print(f"   📀 Found {len(audio_files)} audio files")
+    print(f"   📑 Found {len(audio_files)} audio files")
     
     json_entries = {}
     
     for audio_path in sorted(audio_files):
         filename = os.path.basename(audio_path)
-        print(f"\n   🎵 Processing: {filename}")
+        print(f"\n   🎤 Processing: {filename}")
         
         # Get metadata from file
         duration = get_audio_duration(audio_path)
@@ -519,7 +535,7 @@ def process_local_files(directory, artist_name, album_name=None):
         # Clean title
         clean_name = clean_title(title, artist_arg=artist)
         print(f"      📝 Title: {clean_name}")
-        print(f"      🎤 Artist: {artist}")
+        print(f"      🎙 Artist: {artist}")
         print(f"      ⏱️  Duration: {duration:.1f}s")
         
         # Generate file ID and copy file
@@ -602,7 +618,7 @@ Mixtape CSV format (filename, songname, album, singer):
     
     # --- 1. LOAD EXISTING DATABASE OR INITIALIZE ---
     if os.path.exists(JSON_PATH):
-        print("📁 Loading existing songs database...")
+        print("📂 Loading existing songs database...")
         try:
             with open(JSON_PATH, 'r', encoding='utf-8') as f:
                 json_db = json.load(f)
@@ -653,7 +669,7 @@ Mixtape CSV format (filename, songname, album, singer):
             
             for song in songs:
                 clean_name = clean_title(song['title'], artist_arg=args.artist)
-                print(f"\n   🎵 {args.artist} - {clean_name}")
+                print(f"\n   🎤 {args.artist} - {clean_name}")
                 file_id = clean_filename(clean_name)
                 local_path = os.path.join(SONGS_DIR, f"{file_id}.mp3")
                 
@@ -700,7 +716,7 @@ Mixtape CSV format (filename, songname, album, singer):
                 
                 for song in songs:
                     clean_name = clean_title(song['title'], artist_arg=artist)
-                    print(f"\n   🎵 {artist} - {clean_name}")
+                    print(f"\n   🎤 {artist} - {clean_name}")
                     file_id = clean_filename(clean_name)
                     local_path = os.path.join(SONGS_DIR, f"{file_id}.mp3")
                     
@@ -730,3 +746,4 @@ Mixtape CSV format (filename, songname, album, singer):
 
 if __name__ == "__main__":
     main()
+
